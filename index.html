@@ -59,36 +59,33 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    const firebaseConfig = {
-  apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
+const firebaseConfig = {
+  apiKey: "AIzaSyD...",
   authDomain: "nest-mr-bio.firebaseapp.com",
-  databaseURL: "...",
   projectId: "nest-mr-bio",
   storageBucket: "nest-mr-bio.firebasestorage.app",
   messagingSenderId: "1051338751163",
-  appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e",
-  measurementId: "G-DXZD3SVH46"
+  appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e"
 };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
-    document.getElementById("loginBtn").addEventListener("click", function () {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
+document.getElementById("loginBtn").addEventListener("click", function () {
 
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          alert("Login Successful ✅");
-        })
-        .catch((error) => {
-          alert("Login Failed ❌ " + error.message);
-        });
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      window.location.href = "dashboard.html";
+    })
+    .catch((error) => {
+      alert(error.message);
     });
-  </script>
 
-</body>
-</html>
+});
+  </script>
