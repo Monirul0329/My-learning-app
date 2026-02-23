@@ -1,9 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>My Learning App</title>
+  <title>My Learning App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .card {
+      background: white;
+      color: black;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 300px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    button {
+      background: #4e73df;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #2e59d9;
+    }
+  </style>
 </head>
+
 <body>
-<h1>My Learning App is Live 🔥</h1>
+
+<div class="container">
+  <h1>My Learning App 🚀</h1>
+  <p>Build Your Future With Smart Learning</p>
+
+  <div class="card">
+    <h3>Student Panel</h3>
+    <p>Access courses and track your progress</p>
+    <button onclick="studentLogin()">Login as Student</button>
+  </div>
+
+  <div class="card">
+    <h3>Teacher Panel</h3>
+    <p>Manage courses and set questions</p>
+    <button onclick="teacherLogin()">Login as Teacher</button>
+  </div>
+</div>
+
+<script>
+  function studentLogin() {
+    alert("Student Login Coming Soon 🔥");
+  }
+
+  function teacherLogin() {
+    alert("Teacher Login Coming Soon 🔥");
+  }
+</script>
+
 </body>
 </html>
