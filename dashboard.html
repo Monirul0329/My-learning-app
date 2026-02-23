@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: linear-gradient(135deg,#4e73df,#1cc88a);
+      color: white;
+      padding-top: 100px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: white;
+      color: black;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Welcome to Dashboard 🎉</h1>
+<p>You are logged in successfully.</p>
+
+<button onclick="logout()">Logout</button>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
+  authDomain: "nest-mr-bio.firebaseapp.com",
+  projectId: "nest-mr-bio",
+  storageBucket: "nest-mr-bio.firebasestorage.app",
+  messagingSenderId: "1051338751163",
+  appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.logout = function() {
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
+  });
+};
+</script>
+
+</body>
+</html>
