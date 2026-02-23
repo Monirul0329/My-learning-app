@@ -3,6 +3,7 @@
 <head>
   <title>My Learning App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       margin: 0;
@@ -49,6 +50,12 @@
     button:hover {
       background: #2e59d9;
     }
+
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 
@@ -59,62 +66,49 @@
   <p>Build Your Future With Smart Learning</p>
 
   <div class="card">
-    <h3>Student Panel</h3>
-    <p>Access courses and track your progress</p>
-    <button onclick="studentLogin()">Login as Student</button>
-  </div>
-
-  <div class="card">
-    <h3>Teacher Panel</h3>
-    <p>Manage courses and set questions</p>
-    <button onclick="teacherLogin()">Login as Teacher</button>
+    <h3>Student Login</h3>
+    <input type="email" id="email" placeholder="Enter Email">
+    <input type="password" id="password" placeholder="Enter Password">
+    <br><br>
+    <button id="loginBtn">Login</button>
   </div>
 </div>
 
-<script>
-  function studentLogin() {
-    alert("Student Login Coming Soon 🔥");
-  }
-
-  function teacherLogin() {
-    alert("Teacher Login Coming Soon 🔥");
-  }
-</script>
-
 <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
+  apiKey: "AIzaSyDW3wJTOurtrqQfR2DsQ1mqj__w6-4_S",
   authDomain: "nest-mr-bio.firebaseapp.com",
   databaseURL: "https://nest-mr-bio-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "nest-mr-bio",
   storageBucket: "nest-mr-bio.firebasestorage.app",
   messagingSenderId: "1051338751163",
   appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e",
-  measurementId: "G-DXZD3SVH46"
+  measurementId: "G-DXZD3VSH46"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script></body>
+const auth = getAuth(app);
+
+document.getElementById("loginBtn").addEventListener("click", function() {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      alert("Login Successful ✅");
+    })
+    .catch((error) => {
+      alert("Login Failed ❌ " + error.message);
+    });
+
+});
+
+</script>
+
+</body>
 </html>
