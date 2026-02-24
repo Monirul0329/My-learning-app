@@ -1,61 +1,60 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
+    apiKey: "AizasyDYW3wJTOurtrgQffR2DsQimqj__w6-4_s",
     authDomain: "nest-mr-bio.firebaseapp.com",
-    databaseURL: "https://nest-mr-bio-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "nest-mr-bio",
     storageBucket: "nest-mr-bio.firebasestorage.app",
     messagingSenderId: "1051338751163",
-    appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e",
-    measurementId: "G-DXZD3SVH46"
-  };
+    appId: "1:1051338751163:web:fd94176e0ccb9b251fbd9e"
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const questionList = document.getElementById("questionList");
+// --- SIGNUP LOGIC ---
+document.getElementById('btnSignup')?.addEventListener('click', async () => {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const city = document.getElementById('regCity').value;
+    const phone = document.getElementById('regPhone').value;
 
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    alert("Please login first");
-    window.location.href = "login.html";
-    return;
-  }
+    try {
+        const res = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", res.user.uid), {
+            uid: res.user.uid,
+            name: name,
+            email: email,
+            city: city,
+            phone: phone,
+            role: "student",
+            is_approved: false // Default false
+        });
+        alert("Signup Success! Wait for Admin Approval.");
+    } catch (err) { alert(err.message); }
+});
 
-  const userRef = doc(db, "users", user.uid);
-  const userSnap = await getDoc(userRef);
-  const userData = userSnap.data();
+// --- LOGIN LOGIC ---
+document.getElementById('btnLogin')?.addEventListener('click', async () => {
+    const email = document.getElementById('logEmail').value;
+    const password = document.getElementById('logPassword').value;
 
-  if (!userData.approved) {
-    alert("Waiting for admin approval");
-    return;
-  }
-
-  let q;
-
-  if (userData.paid === true || userData.freeAccess === true) {
-    q = query(
-      collection(db, "questions"),
-      where("topicId", "==", "topic1")
-    );
-  } else {
-    q = query(
-      collection(db, "questions"),
-      where("topicId", "==", "topic1"),
-      where("isSample", "==", true)
-    );
-  }
-
-  const querySnapshot = await getDocs(q);
-
-  querySnapshot.forEach((doc) => {
-    const p = document.createElement("p");
-    p.innerText = doc.data().question;
-    questionList.appendChild(p);
-  });
-
+    try {
+        const res = await signInWithEmailAndPassword(auth, email, password);
+        const userDoc = await getDoc(doc(db, "users", res.user.uid));
+        
+        if (userDoc.exists()) {
+            const data = userDoc.data();
+            if (data.is_approved === true) {
+                window.location.href = "student.html"; // Approved hole dashboard e jabe
+            } else {
+                alert("Account ekhono approve kora hoyni!");
+                auth.signOut();
+            }
+        }
+    } catch (err) { alert(err.message); }
 });
