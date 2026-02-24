@@ -7,7 +7,6 @@ export const loginUser = async (email, password) => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // User data check kora
         const docRef = doc(db, "users", user.uid);
         const docSnap = await getDoc(docRef);
 
@@ -18,7 +17,6 @@ export const loginUser = async (email, password) => {
                 alert("Tomar account ekhono admin approve koreni!");
                 await auth.signOut();
             } else {
-                // Dashboard e niye jao
                 window.location.href = "dashboard.html";
             }
         }
