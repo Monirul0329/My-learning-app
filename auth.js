@@ -1,4 +1,53 @@
-import { db } from "./firebase.js";
+import { auth, db } from "./firebase.js";
+import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const loginBtn = document.getElementById("loginBtn");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const roleSelect = document.getElementById("role");
+
+loginBtn.addEventListener("click", async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  const selectedRole = roleSelect.value;
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("User data not found in Firestore");
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    if (!userData.approved) {
+      alert("Account not approved yet");
+      return;
+    }
+
+    if (userData.role !== selectedRole) {
+      alert("Wrong role selected");
+      return;
+    }
+
+    if (selectedRole === "admin") {
+      window.location.href = "admin.html";
+    } else if (selectedRole === "teacher") {
+      window.location.href = "teacher.html";
+    } else {
+      window.location.href = "student.html";
+    }
+
+  } catch (error) {
+    alert(error.message);
+  }
+});import { db } from "./firebase.js";
 const loginBtn = document.getElementById("loginBtn");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
