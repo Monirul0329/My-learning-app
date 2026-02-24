@@ -3,38 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mNeet Pro 2026 | LMS</title>
+    <title>mNeet 2026 | Entrance</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#020617] text-slate-200 font-sans selection:bg-yellow-500/30">
-
-    <div id="topBar" class="fixed top-0 inset-x-0 h-16 bg-[#020617]/80 backdrop-blur-md border-b border-slate-800 z-50 flex items-center justify-between px-6 hidden">
-        <button id="backBtn" class="bg-slate-800 p-2 rounded-xl text-xs font-bold hover:bg-slate-700">
-            <i class="fas fa-arrow-left"></i> BACK
-        </button>
-        <div class="flex items-center gap-3">
-            <div class="text-right">
-                <p id="userRank" class="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Aspirant</p>
-                <p id="userLevel" class="text-[10px] text-slate-500">Next Rank in 7 Days</p>
-            </div>
-            <div class="bg-yellow-500 text-slate-950 px-4 py-2 rounded-2xl font-black text-sm shadow-lg">
-                <span id="bpCoins">0</span> BP
-            </div>
+<body class="bg-[#020617] text-slate-200 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md bg-[#0f172a] p-10 rounded-[3rem] border border-slate-800 shadow-2xl">
+        <h1 class="text-5xl font-black text-yellow-500 text-center mb-2 italic">mNeet</h1>
+        <p class="text-slate-500 text-center mb-8 uppercase tracking-[0.3em] text-[10px]">Doctor's Portal 2026</p>
+        <div class="space-y-4" id="authForm">
+            <input type="email" id="email" placeholder="Medical Email" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
+            <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
+            <button id="btnLogin" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 shadow-lg">Login to Campus</button>
+            <p id="msg" class="text-center text-xs text-yellow-500 font-bold"></p>
         </div>
     </div>
-
-    <div id="mainApp" class="pt-20 pb-10 px-6 min-h-screen">
-        </div>
-
-    <div id="pdfModal" class="fixed inset-0 bg-black z-[100] hidden flex flex-col">
-        <div class="p-4 bg-slate-900 flex justify-between items-center">
-            <h3 id="pdfTitle" class="text-sm font-bold">NCERT Viewer</h3>
-            <button onclick="closePDF()" class="bg-red-500/20 text-red-500 px-4 py-1 rounded-lg text-xs font-bold">CLOSE</button>
-        </div>
-        <iframe id="pdfFrame" class="w-full flex-1" src=""></iframe>
-    </div>
-
     <script type="module" src="app.js"></script>
 </body>
 </html>
