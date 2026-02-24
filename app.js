@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
@@ -16,28 +16,45 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const btnSignup = document.getElementById('btnSignup');
-if(btnSignup) {
-    btnSignup.onclick = async () => {
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const pass = document.getElementById('pass').value;
+const authSection = document.getElementById('authSection');
+const dashboardSection = document.getElementById('dashboardSection');
+const msg = document.getElementById('msg');
 
-        if(!name || !email || !pass) {
-            alert("Fields empty!");
-            return;
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists() && userDoc.data().is_approved === true) {
+            authSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+        } else {
+            msg.innerText = "Wait for Monirul to approve your account!";
         }
+    } else {
+        authSection.classList.remove('hidden');
+        dashboardSection.classList.add('hidden');
+    }
+});
 
-        try {
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "users", res.user.uid), {
-                name: name,
-                email: email,
-                is_approved: false
-            });
-            alert("Success! Approved holei class pabe.");
-        } catch (err) {
-            alert("Firebase Error: " + err.message);
-        }
-    };
-}
+document.getElementById('btnAction').onclick = async () => {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('pass').value;
+
+    if(!name || !email || !pass) { msg.innerText = "Fill all fields!"; return; }
+
+    try {
+        msg.innerText = "Requesting Access...";
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "users", res.user.uid), {
+            name: name,
+            email: email,
+            is_approved: false
+        });
+        msg.innerText = "Success! Wait for approval.";
+    } catch (err) {
+        msg.innerText = "Error: " + err.message;
+    }
+};
+
+document.getElementById('btnLogout').onclick = () => signOut(auth);
+  
