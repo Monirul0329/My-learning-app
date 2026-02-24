@@ -8,8 +8,7 @@ const firebaseConfig = {
   projectId: "mneet-f9bc7",
   storageBucket: "mneet-f9bc7.firebasestorage.app",
   messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011",
-  measurementId: "G-78T6K30L0T"
+  appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -24,7 +23,7 @@ if(btnSignup) {
         const pass = document.getElementById('pass').value;
 
         if(!name || !email || !pass) {
-            alert("Please fill all fields");
+            alert("Fields empty!");
             return;
         }
 
@@ -35,9 +34,9 @@ if(btnSignup) {
                 email: email,
                 is_approved: false
             });
-            alert("Success! Request sent to Monirul.");
+            alert("Success! Approved holei class pabe.");
         } catch (err) {
-            alert("Error: " + err.message);
+            alert("Firebase Error: " + err.message);
         }
     };
 }
