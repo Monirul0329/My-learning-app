@@ -3,15 +3,13 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AizasyDYW3wJTOurtrgQffR2DsQimqj__w6-4_s", // apiKey eiki ache
-    authDomain: "nest-mr-bio.firebaseapp.com",
-    projectId: "nest-mr-bio",
-    storageBucket: "nest-mr-bio.firebasestorage.app",
-    messagingSenderId: "1051338751163",
-    appId: "1:1051338751163:web:59e6f33e44b266b31fbd9e", // NOTUN ID
-    measurementId: "G-DXZD3SVH46"                       // NOTUN ID
+  apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7L_RG0uriZM",
+  authDomain: "mneet-f9bc7.firebaseapp.com",
+  projectId: "mneet-f9bc7",
+  storageBucket: "mneet-f9bc7.firebasestorage.app",
+  messagingSenderId: "944379440196",
+  appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
