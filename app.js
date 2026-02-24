@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
@@ -8,65 +8,41 @@ const firebaseConfig = {
   projectId: "mneet-f9bc7",
   storageBucket: "mneet-f9bc7.firebasestorage.app",
   messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011",
-  measurementId: "G-70T6K3DLGT"
+  appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+
 const syllabus = {
     bio: [
-        { name: "The Living World", progress: 0 }, { name: "Biological Classification", progress: 0 },
-        { name: "Plant Kingdom", progress: 0 }, { name: "Animal Kingdom", progress: 0 },
-        { name: "Morphology of Flowering Plants", progress: 0 }, { name: "Anatomy of Flowering Plants", progress: 0 },
-        { name: "Structural Organisation in Animals", progress: 0 }, { name: "Cell: The Unit of Life", progress: 0 },
-        { name: "Biomolecules", progress: 0 }, { name: "Cell Cycle and Cell Division", progress: 0 },
-        { name: "Photosynthesis in Higher Plants", progress: 0 }, { name: "Respiration in Plants", progress: 0 },
-        { name: "Plant Growth and Development", progress: 0 }, { name: "Breathing and Exchange of Gases", progress: 0 },
-        { name: "Body Fluids and Circulation", progress: 0 }, { name: "Excretory Products and Elimination", progress: 0 },
-        { name: "Locomotion and Movement", progress: 0 }, { name: "Neural Control and Coordination", progress: 0 },
-        { name: "Chemical Coordination and Integration", progress: 0 }, { name: "Sexual Reproduction in Flowering Plants", progress: 0 },
-        { name: "Human Reproduction", progress: 0 }, { name: "Reproductive Health", progress: 0 },
-        { name: "Principles of Inheritance and Variation", progress: 0 }, { name: "Molecular Basis of Inheritance", progress: 0 },
-        { name: "Evolution", progress: 0 }, { name: "Human Health and Disease", progress: 0 },
-        { name: "Microbes in Human Welfare", progress: 0 }, { name: "Biotechnology: Principles", progress: 0 },
-        { name: "Biotechnology and its Applications", progress: 0 }, { name: "Organisms and Populations", progress: 0 },
-        { name: "Ecosystem", progress: 0 }, { name: "Biodiversity and Conservation", progress: 0 }
+        { id: "01", name: "The Living World", topics: ["1.1 What is Living?", "1.2 Taxonomy"] },
+        { id: "02", name: "Biological Classification", topics: ["2.1 Kingdom Monera", "2.2 Fungi"] },
+        { id: "08", name: "Cell: The Unit of Life", topics: ["8.1 Prokaryotic Cell", "8.2 Eukaryotic Cell"] }
+      
     ],
     phy: {
-        c11p1: ["Units & Measurements", "Motion in Straight Line", "Motion in Plane", "Laws of Motion"],
-        c11p2: ["Work Energy Power", "Rotational Motion", "Gravitation", "Properties of Solids"],
-        c12p1: ["Electrostatics", "Current Electricity", "Magnetism", "EMI & AC"],
-        c12p2: ["Ray Optics", "Wave Optics", "Modern Physics", "Semiconductors"]
+        c11: [
+            { id: "01", name: "Units and Measurements", topics: ["1.1 Dimensions", "1.2 Errors"] },
+            { id: "02", name: "Motion in a Straight Line", topics: ["2.1 Velocity", "2.2 Acceleration"] }
+        ],
+        c12: [
+            { id: "16", name: "Electrostatic Potential", topics: ["16.1 Capacitance", "16.2 Dielectrics"] }
+        ]
     },
     chem: {
-        physical: ["Mole Concept", "Atomic Structure", "Thermodynamics", "Equilibrium", "Solutions"],
-        inorganic: ["Periodic Table", "Chemical Bonding", "p-Block", "d-f Block", "Coordination"],
-        organic: ["GOC", "Hydrocarbons", "Haloalkanes", "Aldehydes", "Amines"]
+        physical: [{ id: "01", name: "Some Basic Concepts", topics: ["1.1 Mole Concept"] }],
+        inorganic: [{ id: "05", name: "Chemical Bonding", topics: ["5.1 VSEPR Theory"] }],
+        organic: [{ id: "12", name: "GOC", topics: ["12.1 Isomerism"] }]
     }
 };
 
-let activeUser = null;
-
 onAuthStateChanged(auth, async (user) => {
     if (user) {
-        activeUser = user;
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists() && userDoc.data().is_approved) {
-            document.getElementById('authSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
-            document.getElementById('welcomeUser').innerText = `Dr. ${userDoc.data().name}`;
-            document.getElementById('userPointsDisplay').innerText = userDoc.data().bp_coins || 0;
-            switchSubject('bio');
-        } else {
-            document.getElementById('msg').innerText = "Monirul Sir ekhono approve koreni!";
-            setTimeout(() => signOut(auth), 3000);
-        }
-    } else {
-        document.getElementById('authSection').classList.remove('hidden');
-        document.getElementById('dashboardSection').classList.add('hidden');
+        document.getElementById('dashboardSection').classList.remove('hidden');
+        switchSubject('bio');
     }
 });
 
@@ -77,62 +53,58 @@ window.switchSubject = (sub) => {
     document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('bg-yellow-600', 'text-slate-950'));
     document.getElementById(`tab-${sub}`).classList.add('bg-yellow-600', 'text-slate-950');
 
-    if (sub === 'bio') {
-        renderChapters(syllabus.bio, "Biology (32 Chapters)");
-    } else if (sub === 'phy') {
-        renderSection(syllabus.phy.c11p1, "Physics 11 - Part 1");
-        renderSection(syllabus.phy.c11p2, "Physics 11 - Part 2");
-        renderSection(syllabus.phy.c12p1, "Physics 12 - Part 1");
-        renderSection(syllabus.phy.c12p2, "Physics 12 - Part 2");
-    } else if (sub === 'chem') {
-        renderSection(syllabus.chem.physical, "Physical Chemistry");
-        renderSection(syllabus.chem.inorganic, "Inorganic Chemistry");
-        renderSection(syllabus.chem.organic, "Organic Chemistry");
-    }
+    if(sub === 'bio') renderBio();
+    if(sub === 'phy') renderPhy();
+    if(sub === 'chem') renderChem();
 };
 
-function renderChapters(list, title) {
+function renderBio() {
+    syllabus.bio.forEach(ch => createChapterCard(ch));
+}
+
+function renderPhy() {
+    treeLabel("CLASS 11 - PHYSICS");
+    syllabus.phy.c11.forEach(ch => createChapterCard(ch));
+    treeLabel("CLASS 12 - PHYSICS");
+    syllabus.phy.c12.forEach(ch => createChapterCard(ch));
+}
+
+function renderChem() {
+    treeLabel("PHYSICAL CHEMISTRY");
+    syllabus.chem.physical.forEach(ch => createChapterCard(ch));
+    treeLabel("INORGANIC CHEMISTRY");
+    syllabus.chem.inorganic.forEach(ch => createChapterCard(ch));
+    treeLabel("ORGANIC CHEMISTRY");
+    syllabus.chem.organic.forEach(ch => createChapterCard(ch));
+}
+
+function createChapterCard(ch) {
     const tree = document.getElementById('syllabusTree');
-    tree.innerHTML += `<p class="text-[10px] font-bold text-slate-500 uppercase mt-6 mb-2 pl-2 tracking-tighter">${title}</p>`;
-    list.forEach(ch => {
-        tree.innerHTML += `
-            <div class="p-4 mb-2 bg-slate-900/80 rounded-2xl border border-slate-800 hover:border-yellow-500/50 transition-all cursor-pointer">
-                <div class="flex justify-between text-xs font-bold mb-2">
-                    <span>${ch.name}</span>
-                    <span class="text-yellow-500">${ch.progress}%</span>
+    const div = document.createElement('div');
+    div.className = "mb-4 border-l-2 border-slate-800 pl-4";
+    div.innerHTML = `
+        <h4 class="text-xs font-black text-slate-400 mb-2 uppercase">CH-${ch.id}: ${ch.name}</h4>
+        <div class="space-y-1">
+            ${ch.topics.map(t => `
+                <div onclick="showQuizTypes('${t}')" class="p-3 text-[11px] bg-slate-900 rounded-lg hover:bg-yellow-500 hover:text-slate-950 cursor-pointer transition-all">
+                    ${t}
                 </div>
-                <div class="w-full bg-slate-800 h-1 rounded-full"><div class="bg-yellow-500 h-full" style="width:${ch.progress}%"></div></div>
-            </div>`;
-    });
+            `).join('')}
+        </div>
+    `;
+    tree.appendChild(div);
 }
 
-function renderSection(list, title) {
-    const tree = document.getElementById('syllabusTree');
-    tree.innerHTML += `<p class="text-[10px] font-bold text-slate-500 uppercase mt-6 mb-2 pl-2">${title}</p>`;
-    list.forEach(name => {
-        tree.innerHTML += `
-            <div class="p-4 mb-2 bg-slate-900/40 rounded-xl border border-slate-800 hover:border-blue-500/50 cursor-pointer">
-                <h4 class="text-[11px] font-bold">${name}</h4>
-            </div>`;
-    });
+function treeLabel(text) {
+    document.getElementById('syllabusTree').innerHTML += `<p class="text-[10px] font-black text-yellow-500/50 mt-6 mb-2 tracking-widest">${text}</p>`;
 }
 
-document.getElementById('btnAction').onclick = async () => {
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('pass').value;
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", res.user.uid), { name, email, is_approved: false, bp_coins: 0 });
-        document.getElementById('msg').innerText = "Request Sent! Monirul-ke bolo approve korte.";
-    } catch (e) { alert(e.message); }
+window.showQuizTypes = (topic) => {
+    document.getElementById('quizTypeSelector').classList.remove('hidden');
+    document.getElementById('mainView').innerHTML = `
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-white mb-2">${topic}</h2>
+            <p class="text-slate-500">Select a Question Type from above to start the Battle.</p>
+        </div>
+    `;
 };
-
-document.getElementById('btnLogin').onclick = async () => {
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('pass').value;
-    try { await signInWithEmailAndPassword(auth, email, pass); } catch (e) { alert("Login Failed!"); }
-};
-
-document.getElementById('btnLogout').onclick = () => signOut(auth);
-        
