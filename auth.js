@@ -3,15 +3,13 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } f
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
-    authDomain: "nest-mr-bio.firebaseapp.com",
-    databaseURL: "https://nest-mr-bio-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "nest-mr-bio",
-    storageBucket: "nest-mr-bio.firebasestorage.app",
-    messagingSenderId: "1051338751163",
-    appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e",
-    measurementId: "G-DXZD3SVH46"
-  };
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID",
+  storageBucket: "YOUR_BUCKET",
+  messagingSenderId: "YOUR_MSG_ID",
+  appId: "YOUR_APP_ID"
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -23,40 +21,59 @@ const loginBtn = document.getElementById("loginBtn");
 const registerBtn = document.getElementById("registerBtn");
 
 registerBtn.onclick = async () => {
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email.value,
-    password.value
-  );
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
 
-  const user = userCredential.user;
+    const user = userCredential.user;
 
-  await setDoc(doc(db, "users", user.uid), {
-    email: user.email,
-    approved: false,
-    paid: false,
-    freeAccess: false
-  });
+    await setDoc(doc(db, "users", user.uid), {
+      email: user.email,
+      role: "student",
+      approved: false,
+      paid: false
+    });
 
-  alert("Registered! Wait for admin approval.");
+    alert("Registered! Wait for admin approval.");
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
 loginBtn.onclick = async () => {
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    email.value,
-    password.value
-  );
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
 
-  const user = userCredential.user;
+    const user = userCredential.user;
 
-  const userSnap = await getDoc(doc(db, "users", user.uid));
-  const userData = userSnap.data();
+    const userSnap = await getDoc(doc(db, "users", user.uid));
 
-  if (!userData.approved) {
-    alert("Waiting for admin approval");
-    return;
+    if (!userSnap.exists()) {
+      alert("User data not found!");
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    if (!userData.approved) {
+      alert("Waiting for admin approval");
+      return;
+    }
+
+    if (userData.role === "teacher") {
+      window.location.href = "teacher.html";
+    } else {
+      window.location.href = "student.html";
+    }
+
+  } catch (error) {
+    alert(error.message);
   }
-
-  window.location.href = "student.html";
 };
