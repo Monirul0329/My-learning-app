@@ -7,7 +7,6 @@ const firebaseConfig = {
     authDomain: "mneet-f9bc7.firebaseapp.com",
     projectId: "mneet-f9bc7",
     storageBucket: "mneet-f9bc7.firebasestorage.app",
-    messagingSenderId: "944379440196",
     appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
 
