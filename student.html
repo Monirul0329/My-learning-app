@@ -1,14 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Student Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
 </head>
 <body>
+    <h1>Welcome to Your Dashboard</h1>
+    <p>You have access to all course materials here.</p>
+    
+    <div id="course-content">
+        <h3>Chapters</h3>
+        <ul id="chapterList">
+            <li>Chapter 1: Introduction (Coming Soon)</li>
+        </ul>
+    </div>
 
-<h2>Questions</h2>
-<div id="questionList"></div>
+    <button onclick="logout()">Logout</button>
 
-<script type="module" src="student.js"></script>
-
+    <script>
+        function logout() {
+            window.location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
