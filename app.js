@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// Tomar mNeet project-er asol config
 const firebaseConfig = {
   apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7",
   authDomain: "mneet-f9bc7.firebaseapp.com",
@@ -17,7 +16,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Signup function (index.html er button-er ID 'btnSignup' hote hobe)
 document.getElementById('btnSignup').addEventListener('click', async () => {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
@@ -25,11 +23,11 @@ document.getElementById('btnSignup').addEventListener('click', async () => {
 
     try {
         const res = await createUserWithEmailAndPassword(auth, email, pass);
-        // Student profile save kora
+  
         await setDoc(doc(db, "users", res.user.uid), {
             name: name,
             email: email,
-            is_approved: false, // Tumi pore manualy true korbe
+            is_approved: false,
             joinedAt: new Date().toISOString()
         });
         alert("Success! Monirul-er approval er jonno wait koro.");
