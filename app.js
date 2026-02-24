@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7",
+  apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7L_RG0uriZM",
   authDomain: "mneet-f9bc7.firebaseapp.com",
   projectId: "mneet-f9bc7",
   storageBucket: "mneet-f9bc7.firebasestorage.app",
@@ -16,27 +16,34 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-document.getElementById('btnSignup').addEventListener('click', async () => {
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const pass = document.getElementById('pass').value;
+const btn = document.getElementById('btnSignup');
+const msg = document.getElementById('msg');
 
-    if(!name || !email || !pass) {
-        alert("Please fill all fields");
-        return;
-    }
+if(btn) {
+    btn.onclick = async () => {
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const pass = document.getElementById('pass').value;
 
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db, "users", res.user.uid), {
-            name: name,
-            email: email,
-            is_approved: false,
-            joinedAt: new Date().toISOString()
-        });
-        alert("Success! Wait for Admin Approval.");
-    } catch (err) {
-        alert("Error: " + err.message);
-    }
-});
-  
+        if(!name || !email || !pass) {
+            msg.innerText = "Error: Fill all fields!";
+            return;
+        }
+
+        try {
+            msg.innerText = "Processing...";
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            
+            await setDoc(doc(db, "users", res.user.uid), {
+                name: name,
+                email: email,
+                is_approved: false,
+                joinedAt: new Date().toISOString()
+            });
+            
+            msg.innerText = "Success! Wait for Admin Approval.";
+        } catch (err) {
+            msg.innerText = "Error: " + err.message;
+        }
+    };
+}
