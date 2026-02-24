@@ -1,25 +1,39 @@
-import { auth, db } from './firebase.js';
-import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-export const studentSignup = async (email, password, name, phone, city) => {
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Firestore e data save kora
-        await setDoc(doc(db, "users", user.uid), {
-            uid: user.uid,
-            name: name,
-            phone: phone,
-            city: city,
-            email: email,
-            role: "student",
-            is_approved: false // Admin approve korle true hobe
-        });
-
-        alert("Signup Success! Approval er jonno wait koro.");
-    } catch (error) {
-        alert("Signup Error: " + error.message);
-    }
+const firebaseConfig = {
+    apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7",
+    authDomain: "mneet-f9bc7.firebaseapp.com",
+    projectId: "mneet-f9bc7",
+    storageBucket: "mneet-f9bc7.firebasestorage.app",
+    messagingSenderId: "944379440196",
+    appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Signup Logic
+document.getElementById('btnSignup').addEventListener('click', async () => {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const pass = document.getElementById('pass').value;
+    const msg = document.getElementById('msg');
+
+    try {
+        msg.innerText = "Registering...";
+        const res = await createUserWithEmailAndPassword(auth, email, pass);
+        // Step: Save to Firestore with 'approved: false'
+        await setDoc(doc(db, "users", res.user.uid), {
+            name: name,
+            email: email,
+            is_approved: false, // You must change this to TRUE manually in Firestore
+            joinedAt: new Date().toISOString()
+        });
+        msg.innerText = "Success! Account created. Wait for Monirul's approval.";
+    } catch (err) {
+        msg.innerText = "Error: " + err.message;
+    }
+});
