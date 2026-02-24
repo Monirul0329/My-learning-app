@@ -3,21 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mNeet 2026 | Entrance</title>
+    <title>mNeet 2026 | Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-[#020617] text-slate-200 flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-md bg-[#0f172a] p-10 rounded-[3rem] border border-slate-800 shadow-2xl">
-        <h1 class="text-5xl font-black text-yellow-500 text-center mb-2 italic">mNeet</h1>
-        <p class="text-slate-500 text-center mb-8 uppercase tracking-[0.3em] text-[10px]">Doctor's Portal 2026</p>
-        <div class="space-y-4" id="authForm">
-            <input type="email" id="email" placeholder="Medical Email" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-            <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-            <button id="btnLogin" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 shadow-lg">Login to Campus</button>
-            <p id="msg" class="text-center text-xs text-yellow-500 font-bold"></p>
+    <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
+        <h1 class="text-4xl font-black text-yellow-500 text-center mb-6 italic">mNeet</h1>
+        
+        <div id="authContainer" class="space-y-3">
+            <div class="flex gap-2 mb-4 bg-slate-900 p-1 rounded-2xl border border-slate-800">
+                <button onclick="switchMode('signup')" id="btnTabSignup" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-yellow-600 text-slate-950">SIGNUP</button>
+                <button onclick="switchMode('login')" id="btnTabLogin" class="flex-1 py-2 rounded-xl text-[10px] font-bold">LOGIN</button>
+            </div>
+
+            <div id="signupFields" class="space-y-3">
+                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 text-sm">
+                <input type="text" id="regCity" placeholder="City Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 text-sm">
+                <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-sm">
+                    <option value="student">Join as Student</option>
+                    <option value="teacher">Join as Teacher</option>
+                </select>
+                <input type="text" id="regTxn" placeholder="Payment Transaction ID (Optional for Demo)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 text-sm">
+            </div>
+
+            <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 text-sm">
+            <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 text-sm">
+            
+            <button id="mainBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 shadow-lg mt-4 uppercase">Register Now</button>
+            <p id="authMsg" class="text-center text-[10px] text-yellow-500 font-bold mt-4"></p>
         </div>
     </div>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>
