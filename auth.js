@@ -1,26 +1,31 @@
-import { auth, db } from './firebase.js';
-import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-export const loginUser = async (email, password) => {
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const userData = docSnap.data();
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        if (userDoc.exists()) {
+            const role = userDoc.data().role;
             
-            if (userData.role === "student" && userData.is_approved === false) {
-                alert("Tomar account ekhono admin approve koreni!");
-                await auth.signOut();
-            } else {
-                window.location.href = "dashboard.html";
-            }
+            if (role === 'admin') window.location.href = 'admin.html';
+            else if (role === 'teacher') window.location.href = 'teacher.html';
+            else window.location.href = 'student.html';
         }
+    } else {
+        if (!window.location.pathname.includes('index.html')) {
+            window.location.href = 'index.html';
+        }
+    }
+});
+
+window.login = async (email, pass) => {
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
     } catch (error) {
-        alert("Login Error: " + error.message);
+        alert("Invalid Login: " + error.message);
     }
 };
+
+window.logout = () => signOut(auth);
+        
