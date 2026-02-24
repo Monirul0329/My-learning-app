@@ -1,57 +1,61 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { db, auth } from './firebase-config.js';
+import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
-  authDomain: "mneet-f9bc7.firebaseapp.com",
-  projectId: "mneet-f9bc7",
-  storageBucket: "mneet-f9bc7.firebasestorage.app",
-  messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011",
-  measurementId: "G-70T6K3DLGT"
+const chapters = {
+    bio: [
+        { id: "01", name: "The Living World", topics: ["1.1 What is Living?", "1.2 Taxonomy"] },
+        { id: "08", name: "Cell: Unit of Life", topics: ["8.1 Prokaryotic Cell", "8.2 Eukaryotic Cell"] }
+    ],
+    phy: [
+        { id: "01", name: "Units & Measurements", topics: ["1.1 Dimensions", "1.2 Significant Figures"] }
+    ]
 };
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 
-document.getElementById('btnSignup')?.addEventListener('click', async () => {
-    const name = document.getElementById('regName').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const city = document.getElementById('regCity').value;
-    const phone = document.getElementById('regPhone').value;
-
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", res.user.uid), {
-            uid: res.user.uid,
-            name: name,
-            email: email,
-            city: city,
-            phone: phone,
-            role: "student",
-            is_approved: false //
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        onSnapshot(doc(db, "users", user.uid), (d) => {
+            const data = d.data();
+            document.getElementById('bpDisplay').innerText = data.bp_coins || 0;
+            document.getElementById('studentLevel').innerText = data.bp_coins > 2000 ? "Resident Doctor" : "Aspirant";
         });
-        alert("Signup Success! Admin approval er jonno wait koro.");
-    } catch (err) { alert("Error: " + err.message); }
+    }
 });
 
-document.getElementById('btnLogin')?.addEventListener('click', async () => {
-    const email = document.getElementById('logEmail').value;
-    const password = document.getElementById('logPassword').value;
+window.openSubject = (sub) => {
+    const screen = document.getElementById('contentScreen');
+    const dataArea = document.getElementById('screenData');
+    screen.classList.remove('hidden');
+    
+    let html = `<h2 class="text-3xl font-black mb-8 uppercase">${sub} Syllabus</h2>`;
+    chapters[sub].forEach(ch => {
+        html += `
+            <div class="mb-8">
+                <h4 class="text-xs font-black text-slate-500 mb-3">CHAPTER ${ch.id}: ${ch.name}</h4>
+                <div class="space-y-2">
+                    ${ch.topics.map(t => `
+                        <div onclick="showQuizTypes('${t}')" class="p-5 bg-slate-900 rounded-[1.5rem] border border-slate-800 hover:border-yellow-500 cursor-pointer text-sm font-bold">
+                            ${t}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>`;
+    });
+    dataArea.innerHTML = html;
+};
 
-    try {
-        const res = await signInWithEmailAndPassword(auth, email, password);
-        const userDoc = await getDoc(doc(db, "users", res.user.uid));
-        if (userDoc.exists()) {
-            const data = userDoc.data();
-            if (data.is_approved === true || data.approved === true) {
-                window.location.href = "student.html";
-            } else {
-                alert("Account ekhono approve kora hoyni!");
-                auth.signOut();
-            }
-        }
-    } catch (err) { alert("Login Error: " + err.message); }
-});
+window.showQuizTypes = (topic) => {
+    const dataArea = document.getElementById('screenData');
+    dataArea.innerHTML = `
+        <h2 class="text-2xl font-black mb-2">${topic}</h2>
+        <p class="text-slate-500 text-xs mb-8">Select Question Type (+4 / -2 Marking)</p>
+        <div class="grid grid-cols-1 gap-4">
+            <button class="p-6 bg-slate-900 border-2 border-slate-800 rounded-3xl text-left font-bold hover:border-yellow-500">A. Statement Base Quiz</button>
+            <button class="p-6 bg-slate-900 border-2 border-slate-800 rounded-3xl text-left font-bold hover:border-yellow-500">B. Assertion Reason Quiz</button>
+            <button class="p-6 bg-slate-900 border-2 border-slate-800 rounded-3xl text-left font-bold hover:border-yellow-500">C. Correct/Incorrect Quiz</button>
+            <button class="p-6 bg-slate-900 border-2 border-slate-800 rounded-3xl text-left font-bold hover:border-yellow-500">D. Diagram Base Quiz</button>
+            <button class="p-6 bg-slate-900 border-2 border-slate-800 rounded-3xl text-left font-bold hover:border-yellow-500">E. Matching Column Quiz</button>
+        </div>
+    `;
+};
+
+window.closeContent = () => document.getElementById('contentScreen').classList.add('hidden');
