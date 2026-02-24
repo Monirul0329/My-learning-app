@@ -2,13 +2,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-    apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7",
-    authDomain: "mneet-f9bc7.firebaseapp.com",
-    projectId: "mneet-f9bc7",
-    storageBucket: "mneet-f9bc7.firebasestorage.app",
-    messagingSenderId: "944379440196",
-    appId: "1:944379440196:web:9d26b632b3e778d247e011"
+  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
+  authDomain: "mneet-f9bc7.firebaseapp.com",
+  projectId: "mneet-f9bc7",
+  storageBucket: "mneet-f9bc7.firebasestorage.app",
+  messagingSenderId: "944379440196",
+  appId: "1:944379440196:web:9d26b632b3e778d247e011",
+  measurementId: "G-70T6K3DLGT"
 };
 
 const app = initializeApp(firebaseConfig);
