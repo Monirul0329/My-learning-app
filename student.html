@@ -2,25 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mNeet | Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <h1>Welcome to Your Dashboard</h1>
-    <p>You have access to all course materials here.</p>
-    
-    <div id="course-content">
-        <h3>Chapters</h3>
-        <ul id="chapterList">
-            <li>Chapter 1: Introduction (Coming Soon)</li>
-        </ul>
+<body class="bg-[#020617] text-slate-200">
+    <header class="fixed top-0 w-full h-20 bg-[#0b1120]/90 backdrop-blur-md border-b border-slate-800 px-6 flex justify-between items-center z-50">
+        <div>
+            <h1 class="text-xl font-black text-yellow-500 italic">mNeet PRO</h1>
+            <p id="studentLevel" class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Aspirant</p>
+        </div>
+        <div class="bg-yellow-500 text-slate-950 px-5 py-2 rounded-2xl font-black shadow-lg">
+            <span id="bpDisplay">0</span> BP
+        </div>
+    </header>
+
+    <main class="pt-28 px-6 max-w-xl mx-auto pb-20">
+        <div class="mb-10 p-6 bg-slate-900 rounded-[2rem] border border-slate-800">
+            <div class="flex justify-between text-[10px] font-black mb-2 uppercase">
+                <span>Course Completion</span>
+                <span id="totalPercent">0%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div id="totalBar" class="bg-yellow-500 h-full transition-all" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-xs font-black text-slate-500 uppercase px-2 tracking-widest">Get Video & Quiz</h3>
+            <button onclick="openSubject('bio')" class="w-full p-8 bg-slate-900 border border-slate-800 rounded-[2.5rem] flex justify-between items-center hover:border-yellow-500 transition-all">
+                <div class="text-left">
+                    <span class="block text-[10px] text-yellow-500 font-bold mb-1">01.</span>
+                    <span class="font-black text-lg uppercase">Biology Battle</span>
+                </div>
+                <i class="fas fa-dna text-2xl text-slate-700"></i>
+            </button>
+            <button onclick="openSubject('phy')" class="w-full p-8 bg-slate-900 border border-slate-800 rounded-[2.5rem] flex justify-between items-center hover:border-blue-500 transition-all">
+                <div class="text-left">
+                    <span class="block text-[10px] text-blue-500 font-bold mb-1">02.</span>
+                    <span class="font-black text-lg uppercase">Physics Lab</span>
+                </div>
+                <i class="fas fa-atom text-2xl text-slate-700"></i>
+            </button>
+            
+            <h3 class="text-xs font-black text-slate-500 uppercase px-2 pt-6 tracking-widest">NCERT Books PDF</h3>
+            <button onclick="openNCERT()" class="w-full p-8 bg-emerald-500/10 border border-emerald-500/30 rounded-[2.5rem] flex justify-between items-center">
+                <span class="font-black text-lg text-emerald-500 uppercase">Library 2026</span>
+                <i class="fas fa-book-open text-emerald-500 text-2xl"></i>
+            </button>
+        </div>
+    </main>
+
+    <div id="contentScreen" class="fixed inset-0 bg-[#020617] z-[60] hidden overflow-y-auto p-6">
+        <button onclick="closeContent()" class="mb-6 bg-slate-800 px-5 py-2 rounded-xl text-xs font-bold"><i class="fas fa-arrow-left mr-2"></i> BACK</button>
+        <div id="screenData"></div>
     </div>
 
-    <button onclick="logout()">Logout</button>
-
-    <script>
-        function logout() {
-            window.location.href = "index.html";
-        }
-    </script>
+    <script type="module" src="student.js"></script>
 </body>
-</html>
+    </html>
+        
