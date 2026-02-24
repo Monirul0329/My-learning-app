@@ -2,22 +2,18 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebas
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-// Exact configuration from your latest screenshot
 const firebaseConfig = {
-    apiKey: "AizasyDYW3wJTOurtrgQffR2DsQimqj__w6-4_s",
-    authDomain: "nest-mr-bio.firebaseapp.com",
-    projectId: "nest-mr-bio",
-    storageBucket: "nest-mr-bio.firebasestorage.app",
-    messagingSenderId: "1051338751163",
-    appId: "1:1051338751163:web:59e6f33e44b266b31fbd9e", // Latest App ID
-    measurementId: "G-DXZD3SVH46"
+  apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7L_RG0uriZM",
+  authDomain: "mneet-f9bc7.firebaseapp.com",
+  projectId: "mneet-f9bc7",
+  storageBucket: "mneet-f9bc7.firebasestorage.app",
+  messagingSenderId: "944379440196",
+  appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Signup Logic
 document.getElementById('btnSignup')?.addEventListener('click', async () => {
     const name = document.getElementById('regName').value;
     const email = document.getElementById('regEmail').value;
@@ -40,7 +36,6 @@ document.getElementById('btnSignup')?.addEventListener('click', async () => {
     } catch (err) { alert("Error: " + err.message); }
 });
 
-// Login Logic
 document.getElementById('btnLogin')?.addEventListener('click', async () => {
     const email = document.getElementById('logEmail').value;
     const password = document.getElementById('logPassword').value;
