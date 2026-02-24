@@ -1,110 +1,125 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
-  authDomain: "mneet-f9bc7.firebaseapp.com",
-  projectId: "mneet-f9bc7",
-  storageBucket: "mneet-f9bc7.firebasestorage.app",
-  messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011"
+const firebaseConfig = { 
+    apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
+    authDomain: "mneet-f9bc7.firebaseapp.com",
+    projectId: "mneet-f9bc7",
+    storageBucket: "mneet-f9bc7.firebasestorage.app",
+    messagingSenderId: "944379440196",
+    appId: "1:944379440196:web:9d26b632b3e778d247e011"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-
 const syllabus = {
     bio: [
         { id: "01", name: "The Living World", topics: ["1.1 What is Living?", "1.2 Taxonomy"] },
-        { id: "02", name: "Biological Classification", topics: ["2.1 Kingdom Monera", "2.2 Fungi"] },
-        { id: "08", name: "Cell: The Unit of Life", topics: ["8.1 Prokaryotic Cell", "8.2 Eukaryotic Cell"] }
-      
+        { id: "08", name: "Cell: The Unit of Life", topics: ["8.1 Cell Theory", "8.2 Eukaryotic Cell"] }
     ],
     phy: {
-        c11: [
-            { id: "01", name: "Units and Measurements", topics: ["1.1 Dimensions", "1.2 Errors"] },
-            { id: "02", name: "Motion in a Straight Line", topics: ["2.1 Velocity", "2.2 Acceleration"] }
-        ],
-        c12: [
-            { id: "16", name: "Electrostatic Potential", topics: ["16.1 Capacitance", "16.2 Dielectrics"] }
-        ]
+        c11: [{ id: "01", name: "Units & Measurements", topics: ["1.1 Dimensions", "1.2 Significant Figures"] }],
+        c12: [{ id: "15", name: "Ray Optics", topics: ["15.1 Reflection", "15.2 Refraction"] }]
     },
     chem: {
         physical: [{ id: "01", name: "Some Basic Concepts", topics: ["1.1 Mole Concept"] }],
-        inorganic: [{ id: "05", name: "Chemical Bonding", topics: ["5.1 VSEPR Theory"] }],
-        organic: [{ id: "12", name: "GOC", topics: ["12.1 Isomerism"] }]
+        inorganic: [{ id: "03", name: "Chemical Bonding", topics: ["3.1 Hybridization"] }],
+        organic: [{ id: "10", name: "GOC", topics: ["10.1 Inductive Effect"] }]
     }
 };
 
+let userState = { bp: 0, attempt: 1, uid: null };
+let quizState = { currentQ: 0, timeLeft: 0, timer: null, answers: [] };
+
 onAuthStateChanged(auth, async (user) => {
     if (user) {
+        userState.uid = user.uid;
+        const d = await getDoc(doc(db, "users", user.uid));
+        userState.bp = d.data().bp_coins || 0;
+        userState.attempt = d.data().attempt_count || 1;
         document.getElementById('dashboardSection').classList.remove('hidden');
+        document.getElementById('userPointsDisplay').innerText = userState.bp;
+        document.getElementById('attemptDisplay').innerText = userState.attempt;
         switchSubject('bio');
     }
 });
 
 window.switchSubject = (sub) => {
+  
+    document.querySelectorAll('[id^="tab-"]').forEach(btn => btn.className = "w-full py-4 rounded-2xl font-black text-xs border border-slate-800 hover:bg-slate-900 flex items-center px-6 gap-3 transition-all");
+    document.getElementById(`tab-${sub}`).className = "w-full py-4 rounded-2xl font-black text-xs border border-slate-800 bg-yellow-600 text-slate-950 flex items-center px-6 gap-3 transition-all";
+    
     const tree = document.getElementById('syllabusTree');
     tree.innerHTML = '';
     
-    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('bg-yellow-600', 'text-slate-950'));
-    document.getElementById(`tab-${sub}`).classList.add('bg-yellow-600', 'text-slate-950');
-
-    if(sub === 'bio') renderBio();
-    if(sub === 'phy') renderPhy();
-    if(sub === 'chem') renderChem();
+    if(sub === 'bio') syllabus.bio.forEach(ch => renderChapter(ch, "BIO"));
+    else if(sub === 'phy') {
+        renderLabel("CLASS 11 PHYSICS"); syllabus.phy.c11.forEach(ch => renderChapter(ch, "PHY"));
+        renderLabel("CLASS 12 PHYSICS"); syllabus.phy.c12.forEach(ch => renderChapter(ch, "PHY"));
+    }
+    else if(sub === 'chem') {
+        renderLabel("PHYSICAL"); syllabus.chem.physical.forEach(ch => renderChapter(ch, "CHEM"));
+        renderLabel("ORGANIC"); syllabus.chem.organic.forEach(ch => renderChapter(ch, "CHEM"));
+    }
 };
 
-function renderBio() {
-    syllabus.bio.forEach(ch => createChapterCard(ch));
-}
-
-function renderPhy() {
-    treeLabel("CLASS 11 - PHYSICS");
-    syllabus.phy.c11.forEach(ch => createChapterCard(ch));
-    treeLabel("CLASS 12 - PHYSICS");
-    syllabus.phy.c12.forEach(ch => createChapterCard(ch));
-}
-
-function renderChem() {
-    treeLabel("PHYSICAL CHEMISTRY");
-    syllabus.chem.physical.forEach(ch => createChapterCard(ch));
-    treeLabel("INORGANIC CHEMISTRY");
-    syllabus.chem.inorganic.forEach(ch => createChapterCard(ch));
-    treeLabel("ORGANIC CHEMISTRY");
-    syllabus.chem.organic.forEach(ch => createChapterCard(ch));
-}
-
-function createChapterCard(ch) {
+function renderChapter(ch, sub) {
     const tree = document.getElementById('syllabusTree');
-    const div = document.createElement('div');
-    div.className = "mb-4 border-l-2 border-slate-800 pl-4";
-    div.innerHTML = `
-        <h4 class="text-xs font-black text-slate-400 mb-2 uppercase">CH-${ch.id}: ${ch.name}</h4>
-        <div class="space-y-1">
-            ${ch.topics.map(t => `
-                <div onclick="showQuizTypes('${t}')" class="p-3 text-[11px] bg-slate-900 rounded-lg hover:bg-yellow-500 hover:text-slate-950 cursor-pointer transition-all">
-                    ${t}
-                </div>
-            `).join('')}
-        </div>
-    `;
-    tree.appendChild(div);
+    tree.innerHTML += `
+        <div class="mb-6">
+            <h4 class="text-[10px] font-black text-slate-500 mb-2 px-2">${sub} CH-${ch.id}: ${ch.name}</h4>
+            <div class="space-y-1">
+                ${ch.topics.map(t => `<div onclick="initQuizFlow('${t}')" class="p-4 bg-slate-900/50 rounded-2xl border border-slate-800 hover:border-yellow-500 cursor-pointer text-[11px] font-bold">${t}</div>`).join('')}
+            </div>
+        </div>`;
 }
 
-function treeLabel(text) {
-    document.getElementById('syllabusTree').innerHTML += `<p class="text-[10px] font-black text-yellow-500/50 mt-6 mb-2 tracking-widest">${text}</p>`;
-}
-
-window.showQuizTypes = (topic) => {
-    document.getElementById('quizTypeSelector').classList.remove('hidden');
-    document.getElementById('mainView').innerHTML = `
-        <div class="text-center">
-            <h2 class="text-2xl font-bold text-white mb-2">${topic}</h2>
-            <p class="text-slate-500">Select a Question Type from above to start the Battle.</p>
-        </div>
-    `;
+window.initQuizFlow = (topic) => {
+    document.getElementById('selectedTopicTitle').innerText = topic;
+    document.getElementById('quizTypePanel').classList.remove('hidden');
+    document.getElementById('quizArena').classList.add('hidden');
+    document.getElementById('pdfViewer').classList.add('hidden');
+    
+    const types = ['A. Statement Base', 'B. Assertion Reason', 'C. Correct/Incorrect', 'D. Diagram Base', 'E. Matching Column'];
+    const grid = document.getElementById('quizTypeGrid');
+    grid.innerHTML = types.map(type => `
+        <button onclick="startFinalQuiz('${topic}', '${type}')" class="bg-slate-900 border-2 border-slate-800 p-6 rounded-[2rem] hover:border-yellow-500 transition-all text-center">
+            <span class="text-yellow-500 font-black text-xl block mb-1">${type.split('.')[0]}</span>
+            <p class="text-[10px] font-bold text-slate-400">${type.split('. ')[1]}</p>
+        </button>`).join('');
 };
+
+window.startFinalQuiz = (topic, type) => {
+    document.getElementById('quizTypePanel').classList.add('hidden');
+    document.getElementById('quizArena').classList.remove('hidden');
+  
+    quizState.timeLeft = userState.attempt === 1 ? 60 : (userState.attempt === 2 ? 45 : 35);
+    runTimer();
+
+};
+
+function runTimer() {
+    clearInterval(quizState.timer);
+    quizState.timer = setInterval(() => {
+        if(quizState.timeLeft > 0) {
+            quizState.timeLeft--;
+            document.getElementById('quizTimer').innerText = `00:${quizState.timeLeft < 10 ? '0' : ''}${quizState.timeLeft}`;
+        } else {
+          
+            const btns = document.querySelectorAll('#optionsGrid button');
+            btns.forEach(b => b.onclick = null);
+        }
+    }, 1000);
+}
+
+window.openNCERT = () => {
+    document.getElementById('pdfViewer').classList.remove('hidden');
+    document.getElementById('quizTypePanel').classList.add('hidden');
+    document.getElementById('quizArena').classList.add('hidden');
+};
+
+function renderLabel(l) { document.getElementById('syllabusTree').innerHTML += `<p class="text-[9px] font-black text-yellow-500/50 mt-6 mb-2 tracking-widest pl-2">${l}</p>`; }
+          
