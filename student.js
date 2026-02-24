@@ -3,12 +3,13 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } f
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDlmQwV3IN_asZolPyaBLBb7L_RG0uriZM",
+  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
   authDomain: "mneet-f9bc7.firebaseapp.com",
   projectId: "mneet-f9bc7",
   storageBucket: "mneet-f9bc7.firebasestorage.app",
   messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011"
+  appId: "1:944379440196:web:9d26b632b3e778d247e011",
+  measurementId: "G-70T6K3DLGT"
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
