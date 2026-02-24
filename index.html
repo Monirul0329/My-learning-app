@@ -1,18 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Login System</title>
 </head>
 <body>
 
-<h2>Login</h2>
+<h2>Select Role</h2>
 
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Password"><br><br>
+<button onclick="showAdmin()">Admin</button>
+<button onclick="showTeacher()">Teacher</button>
+<button onclick="showStudent()">Student</button>
 
-<button id="loginBtn">Login</button>
-<button id="registerBtn">Register</button>
-<button id="forgotBtn">Forgot Password</button>
+<hr>
+
+<div id="loginSection"></div>
+
+<script>
+function showAdmin() {
+  document.getElementById("loginSection").innerHTML = `
+    <h3>Admin Login</h3>
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+    <button onclick="adminLogin()">Login</button>
+  `;
+}
+
+function showTeacher() {
+  document.getElementById("loginSection").innerHTML = `
+    <h3>Teacher Login</h3>
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+    <button onclick="teacherLogin()">Login</button>
+  `;
+}
+
+function showStudent() {
+  document.getElementById("loginSection").innerHTML = `
+    <h3>Student Login</h3>
+    <input type="email" id="email" placeholder="Email"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+    <button onclick="studentLogin()">Login</button>
+  `;
+}
+</script>
 
 <script type="module" src="auth.js"></script>
 
