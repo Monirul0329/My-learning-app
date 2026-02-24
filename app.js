@@ -16,34 +16,28 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const btn = document.getElementById('btnSignup');
-const msg = document.getElementById('msg');
-
-if(btn) {
-    btn.onclick = async () => {
+const btnSignup = document.getElementById('btnSignup');
+if(btnSignup) {
+    btnSignup.onclick = async () => {
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const pass = document.getElementById('pass').value;
 
         if(!name || !email || !pass) {
-            msg.innerText = "Error: Fill all fields!";
+            alert("Please fill all fields");
             return;
         }
 
         try {
-            msg.innerText = "Processing...";
             const res = await createUserWithEmailAndPassword(auth, email, pass);
-            
             await setDoc(doc(db, "users", res.user.uid), {
                 name: name,
                 email: email,
-                is_approved: false,
-                joinedAt: new Date().toISOString()
+                is_approved: false
             });
-            
-            msg.innerText = "Success! Wait for Admin Approval.";
+            alert("Success! Request sent to Monirul.");
         } catch (err) {
-            msg.innerText = "Error: " + err.message;
+            alert("Error: " + err.message);
         }
     };
 }
