@@ -1,26 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login System</title>
-</head>
+    <meta charset="UTF-8">
+    <title>Learning App - Welcome</title>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
+    <div id="auth-container">
+        <h2>Welcome to Learning App</h2>
+        
+        <div id="signup-section">
+            <h3>Student Signup</h3>
+            <input type="text" id="regName" placeholder="Full Name"><br>
+            <input type="text" id="regCity" placeholder="City"><br>
+            <input type="number" id="regPhone" placeholder="Phone Number"><br>
+            <input type="email" id="regEmail" placeholder="Email"><br>
+            <input type="password" id="regPassword" placeholder="Password"><br>
+            <button id="btnSignup">Register</button>
+        </div>
 
-<h2>Login</h2>
+        <hr>
 
-<select id="role">
-  <option value="admin">Admin</option>
-  <option value="teacher">Teacher</option>
-  <option value="student">Student</option>
-</select>
+        <div id="login-section">
+            <h3>Login</h3>
+            <input type="email" id="logEmail" placeholder="Email"><br>
+            <input type="password" id="logPassword" placeholder="Password"><br>
+            <button id="btnLogin">Login</button>
+        </div>
+    </div>
 
-<br><br>
-
-<input type="email" id="email" placeholder="Email"><br><br>
-<input type="password" id="password" placeholder="Password"><br><br>
-
-<button id="loginBtn">Login</button>
-
-<script type="module" src="auth.js"></script>
-
+    <script type="module" src="student.js"></script>
 </body>
 </html>
