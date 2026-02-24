@@ -5,44 +5,20 @@
 </head>
 <body>
 
-<h2>Select Role</h2>
+<h2>Login</h2>
 
-<button onclick="showAdmin()">Admin</button>
-<button onclick="showTeacher()">Teacher</button>
-<button onclick="showStudent()">Student</button>
+<select id="role">
+  <option value="admin">Admin</option>
+  <option value="teacher">Teacher</option>
+  <option value="student">Student</option>
+</select>
 
-<hr>
+<br><br>
 
-<div id="loginSection"></div>
+<input type="email" id="email" placeholder="Email"><br><br>
+<input type="password" id="password" placeholder="Password"><br><br>
 
-<script>
-function showAdmin() {
-  document.getElementById("loginSection").innerHTML = `
-    <h3>Admin Login</h3>
-    <input type="email" id="email" placeholder="Email"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="adminLogin()">Login</button>
-  `;
-}
-
-function showTeacher() {
-  document.getElementById("loginSection").innerHTML = `
-    <h3>Teacher Login</h3>
-    <input type="email" id="email" placeholder="Email"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="teacherLogin()">Login</button>
-  `;
-}
-
-function showStudent() {
-  document.getElementById("loginSection").innerHTML = `
-    <h3>Student Login</h3>
-    <input type="email" id="email" placeholder="Email"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="studentLogin()">Login</button>
-  `;
-}
-</script>
+<button id="loginBtn">Login</button>
 
 <script type="module" src="auth.js"></script>
 
