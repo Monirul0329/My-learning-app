@@ -3,71 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mNeet Biology | Advanced Learning</title>
+    <title>mNeet Biology Pro | Gamified</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .animate-shake { animation: shake 0.5s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
 </head>
-<body class="bg-[#020617] text-slate-200">
+<body class="bg-[#020617] text-slate-200 font-sans overflow-x-hidden">
+
+    <div id="authSection" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-[#0f172a] p-10 rounded-[3rem] border border-slate-800 shadow-2xl">
+            <h1 class="text-5xl font-black text-yellow-500 text-center mb-2 italic">mNeet</h1>
+            <p class="text-slate-500 text-center mb-8 uppercase tracking-[0.3em] text-[10px]">Biology Battleground</p>
+            <div class="space-y-4">
+                <input type="text" id="name" placeholder="Future Doctor Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 focus:border-yellow-500 outline-none transition-all">
+                <input type="email" id="email" placeholder="Medical Email" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 focus:border-yellow-500 outline-none transition-all">
+                <input type="password" id="pass" placeholder="Secret Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 focus:border-yellow-500 outline-none transition-all">
+                <button id="btnAction" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-bold text-slate-950 shadow-lg shadow-yellow-600/20">Enrol in Biology Batch</button>
+                <button id="btnLogin" class="w-full bg-slate-800 py-3 rounded-2xl font-semibold">Login to Campus</button>
+            </div>
+            <p id="msg" class="mt-6 text-center text-yellow-500 font-medium"></p>
+        </div>
+    </div>
 
     <div id="dashboardSection" class="hidden min-h-screen flex flex-col md:flex-row">
-        <aside class="w-full md:w-80 bg-[#0b1120] border-r border-slate-800 p-6 flex flex-col">
-            <h1 class="text-3xl font-black text-yellow-500 italic mb-8">mNeet <span class="text-xs text-white">BIO-PRO</span></h1>
+        <aside class="w-full md:w-80 bg-[#0b1120] border-r border-slate-800 p-8 flex flex-col">
+            <h2 class="text-3xl font-black text-yellow-500 italic mb-10">mNeet <span class="text-white text-xs">BIO</span></h2>
             
-            <div class="mb-8 p-4 bg-slate-900/50 rounded-2xl border border-slate-800">
-                <div class="flex justify-between text-xs mb-2">
-                    <span>Syllabus Progress</span>
-                    <span id="overallPercent">0%</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                    <div id="overallBar" class="bg-yellow-500 h-full transition-all duration-500" style="width: 0%"></div>
+            <div class="space-y-6 flex-1 custom-scroll overflow-y-auto" id="chapterList">
+                <p class="text-[10px] font-bold text-slate-500 tracking-widest uppercase pl-2">Syllabus</p>
+                <div class="p-5 rounded-3xl bg-slate-900 border border-slate-800 hover:border-yellow-600/50 cursor-pointer transition-all">
+                    <h4 class="font-bold text-sm">Cell: The Unit of Life</h4>
+                    <div class="flex items-center gap-3 mt-3">
+                        <div class="flex-1 bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-yellow-500 h-full w-[0%]"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-500">0%</span>
+                    </div>
                 </div>
             </div>
 
-            <nav class="space-y-4 flex-1 overflow-y-auto custom-scroll" id="chapterList">
-                </nav>
-
-            <button id="btnLogout" class="mt-4 p-4 rounded-xl bg-red-500/10 text-red-500 font-bold border border-red-500/20">Exit Campus</button>
+            <button id="btnLogout" class="mt-8 bg-red-600/10 text-red-500 p-4 rounded-2xl font-bold border border-red-600/20">Sign Out</button>
         </aside>
 
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
-            <header class="flex justify-between items-center mb-8">
+        <main class="flex-1 p-6 md:p-12">
+            <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <div>
-                    <h2 id="welcomeUser" class="text-3xl font-bold">Hello, Doc!</h2>
-                    <p class="text-slate-400">Current Chapter: <span id="activeChapterTitle" class="text-yellow-500 font-medium">Select a Chapter</span></p>
+                    <h2 id="welcomeUser" class="text-4xl font-bold">Dr. Aspirant</h2>
+                    <p class="text-slate-400">NEET Biology Goal: 360/360</p>
                 </div>
-                <div class="bg-yellow-500 text-slate-900 px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-lg shadow-yellow-500/20">
-                    <i class="fas fa-bolt"></i> <span id="userPoints">1200</span> XP
+                <div class="flex items-center gap-3">
+                    <div class="bg-gradient-to-br from-yellow-500 to-orange-600 text-slate-950 px-6 py-3 rounded-2xl font-black shadow-xl shadow-yellow-500/20">
+                        <i class="fas fa-coins mr-2"></i> <span id="userPoints">0</span> BP Coins
+                    </div>
+                    <div class="bg-slate-800 px-4 py-3 rounded-2xl border border-slate-700 text-[10px] font-black uppercase text-slate-400">
+                        Attempt: <span id="attemptCount" class="text-white text-sm">1</span>
+                    </div>
                 </div>
             </header>
 
-            <div id="contentView" class="max-w-4xl mx-auto">
-                <div id="videoContainer" class="hidden space-y-6">
-                    <div class="aspect-video bg-black rounded-[2rem] overflow-hidden border border-slate-800 shadow-2xl">
-                        <iframe id="mainPlayer" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <h3 id="activeTopicTitle" class="text-2xl font-bold">Topic Name</h3>
-                        <button id="startQuizBtn" class="bg-indigo-600 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-all">Start Topic Quiz</button>
-                    </div>
+            <div id="quizArena" class="max-w-4xl mx-auto space-y-8">
+                <div class="flex justify-between items-center bg-slate-900/50 p-6 rounded-3xl border border-slate-800">
+                    <div id="quizTimer" class="text-3xl font-mono text-red-500 font-black">01:00</div>
+                    <div class="text-slate-500 font-bold uppercase text-xs tracking-tighter">Bio-Quiz Mode Active</div>
                 </div>
 
-                <div id="quizContainer" class="hidden space-y-6">
-                    <div class="flex justify-between items-center bg-slate-900 p-4 rounded-2xl border border-slate-800">
-                        <div id="quizTimer" class="text-2xl font-mono text-red-500 font-bold">00:30</div>
-                        <div class="text-slate-400">Question <span id="qNum" class="text-white">1</span>/10</div>
-                        <div id="quizModeBadge" class="px-4 py-1 rounded-full bg-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-widest border border-indigo-500/30">Practice Mode</div>
+                <div class="bg-slate-900 p-10 rounded-[3rem] border border-slate-800 shadow-2xl min-h-[300px] flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-slate-800">
+                        <div id="progressBar" class="h-full bg-yellow-500 w-0 transition-all"></div>
                     </div>
-                    
-                    <div class="bg-slate-900 p-8 rounded-[2rem] border border-slate-800 shadow-xl min-h-[300px] flex flex-col justify-center">
-                        <h3 id="questionText" class="text-2xl font-bold mb-8 text-center leading-relaxed">?</h3>
-                        <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            </div>
+                    <h3 id="questionText" class="text-2xl md:text-3xl font-bold text-center leading-relaxed">Loading Challenge...</h3>
+                </div>
+
+                <div id="optionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     </div>
 
-                    <div class="flex justify-between">
-                        <button id="prevBtn" class="bg-slate-800 px-8 py-3 rounded-xl font-bold disabled:opacity-50">Previous</button>
-                        <button id="nextBtn" class="bg-yellow-600 text-slate-900 px-10 py-3 rounded-xl font-bold hover:bg-yellow-500">Next Question</button>
-                    </div>
+                <div class="flex justify-between items-center pt-6">
+                    <button id="prevBtn" class="opacity-50 pointer-events-none text-slate-500 font-bold px-6 py-2">Previous</button>
+                    <button id="nextBtn" class="bg-yellow-600 text-slate-950 px-12 py-4 rounded-2xl font-black shadow-lg hover:bg-yellow-500 transition-all">Next Question</button>
                 </div>
             </div>
         </main>
