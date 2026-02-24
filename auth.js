@@ -3,12 +3,13 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } f
 import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_MSG_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDYw3wJTOurtrgQffR2DsQ1mqj__w6-4_s",
+  authDomain: "nest-mr-bio.firebaseapp.com",
+  projectId: "nest-mr-bio",
+  storageBucket: "nest-mr-bio.firebasestorage.app",
+  messagingSenderId: "1051338751163",
+  appId: "1:1051338751163:web:59e5f33e44b265b31fbd9e",
+  measurementId: "G-DXZD3SVH46"
 };
 
 const app = initializeApp(firebaseConfig);
