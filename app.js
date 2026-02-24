@@ -21,17 +21,22 @@ document.getElementById('btnSignup').addEventListener('click', async () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('pass').value;
 
+    if(!name || !email || !pass) {
+        alert("Please fill all fields");
+        return;
+    }
+
     try {
         const res = await createUserWithEmailAndPassword(auth, email, pass);
-  
         await setDoc(doc(db, "users", res.user.uid), {
             name: name,
             email: email,
             is_approved: false,
             joinedAt: new Date().toISOString()
         });
-        alert("Success! Monirul-er approval er jonno wait koro.");
+        alert("Success! Wait for Admin Approval.");
     } catch (err) {
         alert("Error: " + err.message);
     }
 });
+  
