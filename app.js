@@ -27,7 +27,7 @@ onAuthStateChanged(auth, async (user) => {
             authSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
         } else {
-            msg.innerText = "Wait for Monirul to approve your account!";
+            msg.innerText = "Wait! Monirul ekhono tomake approve koreni.";
         }
     } else {
         authSection.classList.remove('hidden');
@@ -50,11 +50,10 @@ document.getElementById('btnAction').onclick = async () => {
             email: email,
             is_approved: false
         });
-        msg.innerText = "Success! Wait for approval.";
+        msg.innerText = "Success! Wait for Monirul's approval.";
     } catch (err) {
         msg.innerText = "Error: " + err.message;
     }
 };
 
 document.getElementById('btnLogout').onclick = () => signOut(auth);
-  
