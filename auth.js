@@ -1,15 +1,50 @@
-import { auth } from "./firebase.js";
-
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
+import { db } from "./firebase.js";
 const loginBtn = document.getElementById("loginBtn");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
 const registerBtn = document.getElementById("registerBtn");
 const forgotBtn = document.getElementById("forgotBtn");
+
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { auth } from "./firebase.js";
+
+loginBtn.addEventListener("click", async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) {
+      alert("User data not found in Firestore");
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    if (!userData.approved) {
+      alert("Your account is not approved yet");
+      return;
+    }
+
+    if (userData.role === "admin") {
+      window.location.href = "admin.html";
+    } else if (userData.role === "teacher") {
+      window.location.href = "teacher.html";
+    } else if (userData.role === "student") {
+      window.location.href = "student.html";
+    } else {
+      alert("Invalid role");
+    }
+
+  } catch (error) {
+    alert(error.message);
+  }
+});
 
 // 🔹 Register
 registerBtn.addEventListener("click", async () => {
@@ -19,20 +54,6 @@ registerBtn.addEventListener("click", async () => {
   try {
     await createUserWithEmailAndPassword(auth, email, password);
     alert("Registration Successful");
-  } catch (error) {
-    alert(error.message);
-  }
-});
-
-// 🔹 Login
-loginBtn.addEventListener("click", async () => {
-  const email = emailInput.value;
-  const password = passwordInput.value;
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("Login Successful");
-    window.location.href = "dashboard.html";
   } catch (error) {
     alert(error.message);
   }
@@ -49,13 +70,12 @@ forgotBtn.addEventListener("click", async () => {
     alert(error.message);
   }
 });
-
-// 🔹 Auto Redirect if already logged in
 onAuthStateChanged(auth, (user) => {
   if (user) {
     window.location.href = "dashboard.html";
   }
 });
+
 import { auth } from "./firebase.js";
 import { signInWithEmailAndPassword } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
