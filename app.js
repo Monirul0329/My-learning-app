@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, addDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -130,8 +129,7 @@ function renderDashboard() {
     welcome.className = "mb-6";
     welcome.innerHTML = `<h2 class="text-3xl font-black text-white italic">FUTURE DOCTOR!</h2>`;
     grid.appendChild(welcome);
-
-
+    
     const quizCard = document.createElement('div');
     quizCard.className = "p-6 bg-gradient-to-br from-yellow-600 to-yellow-400 rounded-[2rem] mb-6 cursor-pointer shadow-xl";
     quizCard.innerHTML = `<h3 class="text-2xl font-black italic text-slate-950">DAILY NCERT QUIZ</h3>`;
@@ -214,4 +212,4 @@ function openChapterContent(subject) {
 }
 
 function showMsg(text) { authMsg.innerText = text; authMsg.classList.remove('hidden'); }
-                                           
+            
