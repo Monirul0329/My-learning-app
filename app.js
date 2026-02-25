@@ -75,7 +75,7 @@ authBtn.onclick = async () => {
             const txn = document.getElementById('regTxn').value;
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
-                name, city, role, txn, email, approved: false, bp_coins: 0, progress: 0
+                name, city, role, txn, email, approved: false, bpcoins: 0, progress: 0
             });
             showMsg("Registered! Wait for Admin Approval.");
         } else {
@@ -88,18 +88,23 @@ onAuthStateChanged(auth, (user) => {
     if(user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             const data = snap.data();
-            if(data && data.approved) {
+      
+            if(data && data.approved === true) {
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                document.getElementById('coins').innerText = data.bp_coins || 0;
+                
+                document.getElementById('coins').innerText = data.bpcoins || 0;
                 document.getElementById('progText').innerText = (data.progress || 0) + "%";
                 document.getElementById('progBar').style.width = (data.progress || 0) + "%";
                 renderDashboard();
             } else {
                 showMsg("Pending Approval from Admin.");
+                document.getElementById('authPage').classList.remove('hidden');
             }
         });
+    } else {
+        document.getElementById('authPage').classList.remove('hidden');
     }
 });
 
@@ -122,7 +127,7 @@ function renderDashboard() {
         const sectionContent = syllabusData[sectionTitle];
         Object.keys(sectionContent).forEach(subject => {
             const card = document.createElement('div');
-            card.className = "p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center mb-4 hover:border-yellow-500/50 transition-all cursor-pointer";
+            card.className = "p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center mb-4 hover:border-yellow-500/50 transition-all cursor-pointer shadow-lg";
             card.innerHTML = `
                 <div>
                     <h3 class="text-xl font-black text-slate-100 italic">${subject}</h3>
@@ -139,6 +144,7 @@ function renderDashboard() {
 }
 
 document.getElementById('globalBackBtn').onclick = () => {
-    window.history.back();
+  
+    alert("Back button clicked");
 };
-        
+      
