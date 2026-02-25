@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, addDoc, orderBy, limit, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, addDoc, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
@@ -14,75 +14,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-let currentSubject = "";
-let currentChapter = "";
-let isLoginMode = true;
-
-const authBtn = document.getElementById('authBtn');
-const toggleAuth = document.getElementById('toggleAuth');
-
-if(toggleAuth) {
-    toggleAuth.onclick = () => {
-        isLoginMode = !isLoginMode;
-        document.getElementById('signupFields').classList.toggle('hidden');
-        authBtn.innerText = isLoginMode ? 'Continue' : 'Create Account';
-        toggleAuth.innerText = isLoginMode ? 'Create Account' : 'Back to Login';
-    };
-}
-
-authBtn.onclick = async () => {
-    const email = document.getElementById('email').value.trim();
-    const pass = document.getElementById('pass').value.trim();
-    if(!email || !pass) return;
-    try {
-        if(!isLoginMode) {
-            const data = {
-                name: document.getElementById('regName').value,
-                city: document.getElementById('regCity').value,
-                role: document.getElementById('regRole').value,
-                txn: document.getElementById('regTxn').value,
-                email, approved: false, bpcoins: 0, progress: 0, streak: 1
-            };
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "users", res.user.uid), data);
-            alert("Registration successful! Wait for admin approval.");
-        } else {
-            await signInWithEmailAndPassword(auth, email, pass);
-        }
-    } catch(e) { document.getElementById('authMsg').innerText = e.message; }
+ll
+const SYLLABUS = {
+    "01. Biology": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Structural Organisation", "Cell: The Unit of Life", "Biomolecules"],
+    "02. Physics": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles"],
+    "03. Chemistry": ["Some Basic Concepts", "Structure of Atom", "Classification of Elements", "Chemical Bonding", "Thermodynamics", "Equilibrium"]
 };
 
+let currentTab = 'study';
+let navHistory = [];
+let userData = null;
+
 onAuthStateChanged(auth, (user) => {
-    if(user) {
+    if (user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             const u = snap.data();
-            if(u && u.approved) {
+            if (u && u.approved) {
+                userData = u;
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                
-                const r = u.role;
-                document.getElementById('adminPanel').classList.toggle('hidden', r !== 'admin');
-                document.getElementById('teacherPanel').classList.toggle('hidden', r !== 'teacher');
-                document.getElementById('dashboardHome').classList.toggle('hidden', r === 'admin' || r === 'teacher');
-                document.getElementById('studentStats').classList.toggle('hidden', r === 'admin' || r === 'teacher');
-                document.getElementById('leaderboard').classList.toggle('hidden', r === 'admin' || r === 'teacher');
-
-                if(r === 'admin') loadAdminData();
-                if(r === 'student') { 
-                    renderDashboard(); 
-                    loadLeaderboard();
-                    updateStreak();
-                    calculateRank(u.bpcoins);
-                }
-
-                document.getElementById('coins').innerText = u.bpcoins || 0;
-                document.getElementById('progText').innerText = (u.progress || 0) + "%";
-                document.getElementById('progBar').style.width = (u.progress || 0) + "%";
-            } else if(u) { alert("Account pending approval."); signOut(auth); }
+                initUserInterface();
+            } else if (u) {
+                alert("Account Pending Approval by Admin.");
+                signOut(auth);
+            }
         });
-        syncNotice();
     } else {
         document.getElementById('authPage').classList.remove('hidden');
         document.getElementById('mainHeader').classList.add('hidden');
@@ -90,152 +47,176 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-document.getElementById('globalBackBtn').onclick = () => {
-    if (currentChapter) { currentChapter = ""; renderChapters(currentSubject); }
-    else if (currentSubject) { currentSubject = ""; renderDashboard(); }
+function initUserInterface() {
+    const r = userData.role;
+    document.getElementById('adminPanel').classList.toggle('hidden', r !== 'admin');
+    document.getElementById('teacherPanel').classList.toggle('hidden', r !== 'teacher');
+    document.getElementById('coins').innerText = userData.bpcoins || 0;
+    
+    if(r === 'admin') loadAdminData();
+    if(r === 'teacher') loadTeacherForm();
+    renderSubjects();
+}
+
+window.changeTab = (tab) => {
+    currentTab = tab;
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active', 'text-yellow-500'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.add('text-slate-500'));
+    const activeTab = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    activeTab.classList.add('active', 'text-yellow-500');
+    navHistory = [];
+    renderSubjects();
 };
 
-function renderDashboard() {
-    currentSubject = ""; currentChapter = "";
-    const grid = document.getElementById('subjectGrid');
-    grid.innerHTML = "";
-    ["01. Biology", "02. Physics", "03. Chemistry"].forEach(sub => {
-        const card = document.createElement('div');
-        card.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer hover:border-yellow-500 transition-all group";
-        card.innerHTML = `
+document.getElementById('globalBackBtn').onclick = () => {
+    if(navHistory.length > 0) {
+        const lastPage = navHistory.pop();
+        lastPage();
+    }
+};
+
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-2">${currentTab === 'study' ? "Let's Study" : "NCERT Books"}</h2>`;
+    
+    Object.keys(SYLLABUS).forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2.5rem] border border-slate-800 flex justify-between items-center cursor-pointer hover:border-yellow-600 transition-all active:scale-95";
+        div.innerHTML = `
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 font-black text-xs">${sub.split('.')[0]}</div>
-                <h3 class="text-lg font-black uppercase italic">${sub.split('.')[1]}</h3>
+                <div class="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 font-black italic">${sub.charAt(0)}${sub.charAt(1)}</div>
+                <div>
+                    <h3 class="font-black italic uppercase text-sm tracking-tight">${sub.split('. ')[1]}</h3>
+                    <p class="text-[8px] text-slate-600 uppercase font-bold tracking-widest">NEET 2026 Syllabus</p>
+                </div>
             </div>
-            <i class="fas fa-chevron-right text-slate-700 group-hover:text-yellow-500"></i>`;
-        card.onclick = () => renderChapters(sub);
-        grid.appendChild(card);
+            <i class="fas fa-arrow-right text-slate-800"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            renderChapters(sub);
+        };
+        grid.appendChild(div);
     });
 }
 
 async function renderChapters(subject) {
-    currentSubject = subject;
-    const grid = document.getElementById('subjectGrid');
-    grid.innerHTML = `<h2 class="text-2xl font-black text-yellow-500 italic mb-6 uppercase">${subject.split('.')[1]}</h2>`;
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<div class="mb-6"><span class="text-yellow-500 text-[9px] font-black uppercase tracking-widest">${subject}</span><h2 class="text-2xl font-black italic uppercase">Chapters</h2></div>`;
     
-    const q = query(collection(db, "study_materials"), where("subject", "==", subject), orderBy("chapterNum", "asc"));
+    const contentType = currentTab === 'study' ? 'video' : 'pdf';
+    const q = query(collection(db, "materials"), where("subject", "==", subject), where("type", "==", contentType));
     const snap = await getDocs(q);
-    const chapters = [];
-    const seen = new Set();
+    const uniqueChapters = [...new Set(snap.docs.map(doc => doc.data().chapter))];
 
-    snap.forEach(doc => {
-        const d = doc.data();
-        if(!seen.has(d.chapter)) { chapters.push({name: d.chapter, num: d.chapterNum}); seen.add(d.chapter); }
-    });
+    if(uniqueChapters.length === 0) grid.innerHTML += `<p class="text-slate-600 text-xs italic">No content uploaded yet.</p>`;
 
-    chapters.forEach(ch => {
+    uniqueChapters.forEach(ch => {
         const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 border border-slate-800 flex items-center gap-4 cursor-pointer hover:bg-slate-800";
-        div.innerHTML = `<div class="bg-yellow-500 text-black text-[9px] font-black px-2 py-0.5 rounded">CH ${ch.num}</div><span class="font-bold">${ch.name}</span>`;
-        div.onclick = () => renderTopics(subject, ch.name);
+        div.className = "p-5 bg-slate-800/40 rounded-3xl mb-3 border border-slate-800 flex justify-between items-center cursor-pointer active:scale-95";
+        div.innerHTML = `<span class="font-bold text-sm tracking-tight">${ch}</span><i class="fas fa-plus text-[10px] text-slate-700"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderChapters(subject));
+            renderTopics(subject, ch);
+        };
         grid.appendChild(div);
     });
 }
 
 async function renderTopics(subject, chapter) {
-    currentChapter = chapter;
-    const grid = document.getElementById('subjectGrid');
-    grid.innerHTML = `<h2 class="text-lg font-bold text-slate-400 mb-6 italic decoration-yellow-500 underline underline-offset-8">${chapter}</h2>`;
-    const q = query(collection(db, "study_materials"), where("subject", "==", subject), where("chapter", "==", chapter));
-    const snap = await getDocs(q);
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-lg font-black text-slate-400 mb-6 italic border-l-4 border-yellow-500 pl-4">${chapter}</h2>`;
     
-    snap.forEach((docSnap, i) => {
+    const contentType = currentTab === 'study' ? 'video' : 'pdf';
+    const q = query(collection(db, "materials"), where("subject", "==", subject), where("chapter", "==", chapter), where("type", "==", contentType));
+    const snap = await getDocs(q);
+
+    snap.forEach((docSnap, index) => {
         const d = docSnap.data();
         const div = document.createElement('div');
-        div.className = "p-4 bg-slate-900 rounded-2xl mb-3 flex justify-between items-center border border-slate-800";
+        div.className = "p-4 bg-slate-950 rounded-2xl mb-3 flex justify-between items-center border border-slate-900";
         div.innerHTML = `
             <div class="flex items-center gap-3">
-                <span class="text-[10px] font-bold text-slate-600">${i+1}.</span>
-                <span class="text-sm font-semibold">${d.topic}</span>
+                <span class="text-[9px] font-black text-slate-700">${index + 1}</span>
+                <span class="text-xs font-semibold text-slate-300">${d.topic}</span>
             </div>
-            <a href="${d.link}" target="_blank" onclick="handleVideoClick('${docSnap.id}')" class="bg-red-600 px-4 py-2 rounded-xl text-[9px] font-black hover:scale-105 transition-all">WATCH</a>`;
+            <a href="${d.link}" target="_blank" onclick="rewardUser()" class="${contentType==='video'?'bg-red-600':'bg-blue-600'} text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter shadow-lg">${contentType==='video'?'Watch':'Download'}</a>`;
         grid.appendChild(div);
     });
 }
 
 async function loadAdminData() {
-    const table = document.getElementById('adminUserTable');
-    const snap = await getDocs(collection(db, "users"));
-    table.innerHTML = "";
-    let approvedCount = 0;
-    snap.forEach(userDoc => {
-        const u = userDoc.data();
-        if(u.approved) approvedCount++;
-        table.innerHTML += `
-            <tr class="hover:bg-slate-800/20">
-                <td class="p-4"><div class="font-bold">${u.name}</div><div class="text-[9px] text-slate-500">${u.role}</div></td>
-                <td class="p-4 font-mono text-yellow-500">${u.txn || 'N/A'}</td>
-                <td class="p-4 text-right">
-                    ${!u.approved ? `<button onclick="approveUser('${userDoc.id}')" class="text-green-500 font-bold underline">Approve</button>` : `<span class="text-slate-600">Active</span>`}
-                </td>
-            </tr>`;
+    const container = document.getElementById('adminUserTable');
+    const q = query(collection(db, "users"), where("approved", "==", false));
+    onSnapshot(q, (snap) => {
+        container.innerHTML = "";
+        snap.forEach(uDoc => {
+            const u = uDoc.data();
+            const div = document.createElement('div');
+            div.className = "p-5 bg-slate-900 rounded-3xl border border-red-900/20 flex justify-between items-center shadow-xl";
+            div.innerHTML = `
+                <div>
+                    <div class="text-xs font-black uppercase text-slate-200">${u.name}</div>
+                    <div class="text-[9px] font-mono text-yellow-500 mt-1">Txn: ${u.txn || 'No ID'}</div>
+                </div>
+                <button onclick="approveUser('${uDoc.id}')" class="bg-green-600 text-[10px] font-black px-4 py-2 rounded-xl active:scale-90">APPROVE</button>`;
+            container.appendChild(div);
+        });
     });
-    document.getElementById('revenue').innerText = approvedCount * 500;
+}
+
+window.approveUser = async (id) => { await updateDoc(doc(db, "users", id), { approved: true }); };
+
+function loadTeacherForm() {
+    const subSel = document.getElementById('upSubject');
+    subSel.innerHTML = "";
+    Object.keys(SYLLABUS).forEach(s => subSel.innerHTML += `<option value="${s}">${s}</option>`);
 }
 
 document.getElementById('uploadBtn').onclick = async () => {
     const data = {
+        type: document.getElementById('upType').value,
         subject: document.getElementById('upSubject').value,
-        chapterNum: parseInt(document.getElementById('upChapterNum').value),
         chapter: document.getElementById('upChapter').value,
         topic: document.getElementById('upTopic').value,
         link: document.getElementById('upLink').value,
         timestamp: Date.now()
     };
-    if(!data.chapter || !data.topic || !data.link) return alert("Fill all fields");
-    await addDoc(collection(db, "study_materials"), data);
-    alert("Content Published!");
-    document.getElementById('upTopic').value = "";
+    if(!data.chapter || !data.topic || !data.link) return alert("Fill all details");
+    await addDoc(collection(db, "materials"), data);
+    alert("Content Published Successfully!");
 };
 
-window.approveUser = async (id) => { await updateDoc(doc(db, "users", id), { approved: true }); loadAdminData(); };
-
-async function loadLeaderboard() {
-    const q = query(collection(db, "users"), orderBy("bpcoins", "desc"), limit(5));
-    const snap = await getDocs(q);
-    const list = document.getElementById('leaderboardList');
-    list.innerHTML = "";
-    snap.forEach((d, i) => {
-        const u = d.data();
-        list.innerHTML += `
-            <div class="p-4 flex justify-between items-center ${i===0?'bg-yellow-500/5':''}">
-                <div class="flex items-center gap-3"><span class="font-black text-slate-700">#${i+1}</span><span class="text-sm font-bold">${u.name}</span></div>
-                <div class="text-yellow-500 font-black text-xs">${u.bpcoins} BP</div>
-            </div>`;
-    });
-}
-
-function syncNotice() {
-    onSnapshot(doc(db, "settings", "globalNotice"), (d) => {
-        if(d.exists()) document.getElementById('adminNotice').innerText = d.data().text;
-    });
-}
-
-window.handleVideoClick = async (id) => {
+window.rewardUser = async () => {
     const userRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(userRef, { 
-        bpcoins: (parseInt(document.getElementById('coins').innerText) + 10),
-        progress: Math.min(100, (parseInt(document.getElementById('progText').innerText) + 1))
-    });
+    await updateDoc(userRef, { bpcoins: (userData.bpcoins || 0) + 5 });
 };
 
-function updateStreak() {
-    const today = new Date().toDateString();
-    if(localStorage.getItem('lastVisit') !== today) {
-        localStorage.setItem('lastVisit', today);
-    }
-}
+document.getElementById('toggleAuth').onclick = () => {
+    const isLogin = document.getElementById('signupFields').classList.contains('hidden');
+    document.getElementById('signupFields').classList.toggle('hidden');
+    document.getElementById('authBtn').innerText = isLogin ? 'Create Account' : 'Continue';
+};
 
-async function calculateRank(coins) {
-    const q = query(collection(db, "users"), where("bpcoins", ">", coins));
-    const snap = await getDocs(q);
-    document.getElementById('userRank').innerText = snap.size + 1;
-}
+document.getElementById('authBtn').onclick = async () => {
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('pass').value.trim();
+    const isSignup = !document.getElementById('signupFields').classList.contains('hidden');
+
+    try {
+        if(isSignup) {
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            await setDoc(doc(db, "users", res.user.uid), {
+                name: document.getElementById('regName').value,
+                city: document.getElementById('regCity').value,
+                txn: document.getElementById('regTxn').value,
+                role: document.getElementById('regRole').value,
+                email, approved: false, bpcoins: 0
+            });
+            alert("Application Sent! Please wait for Admin Approval.");
+        } else {
+            await signInWithEmailAndPassword(auth, email, pass);
+        }
+    } catch(e) { document.getElementById('authMsg').innerText = e.message; }
+};
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
-                
