@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mNeet 2026 | Portal</title>
+    <title>mNeet 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -12,24 +12,27 @@
     <div id="authPage" class="flex items-center justify-center min-h-screen p-4">
         <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
             <h1 class="text-4xl font-black text-yellow-500 text-center mb-6 italic">mNeet</h1>
+            
             <div class="flex gap-2 mb-6 bg-slate-900 p-1 rounded-2xl border border-slate-800">
-                <button onclick="setTab('signup')" id="tabSignup" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-yellow-600 text-slate-950">SIGNUP</button>
-                <button onclick="setTab('login')" id="tabLogin" class="flex-1 py-2 rounded-xl text-[10px] font-bold">LOGIN</button>
+                <button id="tabSignup" class="flex-1 py-2 rounded-xl text-[10px] font-bold bg-yellow-600 text-slate-950">SIGNUP</button>
+                <button id="tabLogin" class="flex-1 py-2 rounded-xl text-[10px] font-bold">LOGIN</button>
             </div>
-            <div id="signupInputs" class="space-y-3">
+
+            <div id="signupFields" class="space-y-3">
                 <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
-                <input type="text" id="regCity" placeholder="City Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
+                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
                 <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-sm">
-                    <option value="student">Join as Student</option>
-                    <option value="teacher">Join as Teacher</option>
-                    <option value="admin">Join as Admin (Manual Approval)</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="admin">Admin</option>
                 </select>
-                <input type="text" id="regTxn" placeholder="Transaction ID (For Payment)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
+                <input type="text" id="regTxn" placeholder="Transaction ID" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
             </div>
+
             <div class="mt-3 space-y-3">
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
+                <input type="email" id="email" placeholder="Email" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
                 <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none text-sm">
-                <button id="actionBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 shadow-lg mt-2 uppercase">Register Now</button>
+                <button id="actionBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black text-slate-950 shadow-lg mt-2 uppercase">Register Now</button>
                 <p id="authMsg" class="text-center text-[10px] text-yellow-500 font-bold mt-4"></p>
             </div>
         </div>
@@ -44,7 +47,7 @@
     </div>
 
     <div id="overlay" class="fixed inset-0 bg-[#020617] z-[100] hidden overflow-y-auto p-6">
-        <button onclick="closeOverlay()" class="mb-6 bg-slate-800 px-5 py-2 rounded-xl text-[10px] font-bold">BACK</button>
+        <button id="closeOverlayBtn" class="mb-6 bg-slate-800 px-5 py-2 rounded-xl text-[10px] font-bold">BACK</button>
         <div id="overlayData"></div>
     </div>
 
