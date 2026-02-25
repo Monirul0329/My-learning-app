@@ -4,11 +4,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/9.23.0/firebase
 import { getStorage } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-storage.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
-    authDomain: "mneet-f9bc7.firebaseapp.com",
-    projectId: "mneet-f9bc7",
-    storageBucket: "mneet-f9bc7.firebasestorage.app",
-    appId: "1:944379440196:web:9d26b632b3e778d247e011"
+  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
+  authDomain: "mneet-f9bc7.firebaseapp.com",
+  projectId: "mneet-f9bc7",
+  storageBucket: "mneet-f9bc7.firebasestorage.app",
+  messagingSenderId: "944379440196",
+  appId: "1:944379440196:web:9d26b632b3e778d247e011",
+  measurementId: "G-70T6K3DLGT"
 };
 
 const app = initializeApp(firebaseConfig);
