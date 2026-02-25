@@ -1,6 +1,20 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-        
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
+  authDomain: "mneet-f9bc7.firebaseapp.com",
+  projectId: "mneet-f9bc7",
+  storageBucket: "mneet-f9bc7.firebasestorage.app",
+  messagingSenderId: "944379440196",
+  appId: "1:944379440196:web:9d26b632b3e778d247e011",
+  measurementId: "G-70T6K3DLGT"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 const syllabusData = {
     "Let's Study": {
         "Biology": [
@@ -23,36 +37,21 @@ const syllabusData = {
     }
 };
 
-onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
-  authDomain: "mneet-f9bc7.firebaseapp.com",
-  projectId: "mneet-f9bc7",
-  storageBucket: "mneet-f9bc7.firebasestorage.app",
-  messagingSenderId: "944379440196",
-  appId: "1:944379440196:web:9d26b632b3e778d247e011",
-  measurementId: "G-70T6K3DLGT"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
 const authBtn = document.getElementById('authBtn');
 const toggleAuth = document.getElementById('toggleAuth');
 const authMsg = document.getElementById('authMsg');
 const signupForm = document.getElementById('signupForm');
 let isLoginMode = true;
 
-toggleAuth.onclick = () => {
-    isLoginMode = !isLoginMode;
-    signupForm.classList.toggle('hidden');
-    authBtn.innerText = isLoginMode ? 'Login Now' : 'Create Account';
-    toggleAuth.innerText = isLoginMode ? 'Create Account' : 'Back to Login';
-    authMsg.classList.add('hidden');
-};
+if(toggleAuth) {
+    toggleAuth.onclick = () => {
+        isLoginMode = !isLoginMode;
+        signupForm.classList.toggle('hidden');
+        authBtn.innerText = isLoginMode ? 'Login Now' : 'Create Account';
+        toggleAuth.innerText = isLoginMode ? 'Create Account' : 'Back to Login';
+        authMsg.classList.add('hidden');
+    };
+}
 
 document.getElementById('forgotBtn').onclick = async () => {
     const email = document.getElementById('email').value;
@@ -66,7 +65,6 @@ document.getElementById('forgotBtn').onclick = async () => {
 authBtn.onclick = async () => {
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('pass').value.trim();
-    
     if(!email || !pass) { showMsg("Fill all fields!"); return; }
 
     try {
@@ -75,7 +73,6 @@ authBtn.onclick = async () => {
             const city = document.getElementById('regCity').value;
             const role = document.getElementById('regRole').value;
             const txn = document.getElementById('regTxn').value;
-            
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
                 name, city, role, txn, email, approved: false, bp_coins: 0, progress: 0
@@ -98,8 +95,7 @@ onAuthStateChanged(auth, (user) => {
                 document.getElementById('coins').innerText = data.bp_coins || 0;
                 document.getElementById('progText').innerText = (data.progress || 0) + "%";
                 document.getElementById('progBar').style.width = (data.progress || 0) + "%";
-              renderDashboard();
-              
+                renderDashboard();
             } else {
                 showMsg("Pending Approval from Admin.");
             }
@@ -111,18 +107,19 @@ function showMsg(text) {
     authMsg.innerText = text;
     authMsg.classList.remove('hidden');
 }
+
 function renderDashboard() {
     const grid = document.getElementById('subjectGrid');
+    if(!grid) return;
     grid.innerHTML = ""; 
 
     Object.keys(syllabusData).forEach(sectionTitle => {
         const sectionHeader = document.createElement('h2');
-        sectionHeader.className = "text-xl font-black text-yellow-500 mt-8 mb-4 uppercase tracking-tighter";
+        sectionHeader.className = "text-xl font-black text-yellow-500 mt-8 mb-4 uppercase tracking-tighter w-full";
         sectionHeader.innerText = sectionTitle;
         grid.appendChild(sectionHeader);
 
         const sectionContent = syllabusData[sectionTitle];
-        
         Object.keys(sectionContent).forEach(subject => {
             const card = document.createElement('div');
             card.className = "p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center mb-4 hover:border-yellow-500/50 transition-all cursor-pointer";
@@ -139,10 +136,9 @@ function renderDashboard() {
             grid.appendChild(card);
         });
     });
-                  }
-                   
+}
 
 document.getElementById('globalBackBtn').onclick = () => {
     window.history.back();
 };
-  
+        
