@@ -90,30 +90,31 @@ onAuthStateChanged(auth, (user) => {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             const data = snap.data();
             if(data && data.approved === true) {
-            
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-              
-                const role = data.role; 
                 
-                if(document.getElementById('adminPanel')) document.getElementById('adminPanel').classList.add('hidden');
-                if(document.getElementById('teacherPanel')) document.getElementById('teacherPanel').classList.add('hidden');
-                if(document.getElementById('dashboardHome')) document.getElementById('dashboardHome').classList.add('hidden');
+                const role = data.role;
+
+                // Hide all sections first
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('teacherPanel').classList.add('hidden');
+                document.getElementById('dashboardHome').classList.add('hidden');
+                document.getElementById('studentStats').classList.add('hidden');
+
                 if(role === 'admin') {
                     document.getElementById('adminPanel').classList.remove('hidden');
                 } else if(role === 'teacher') {
                     document.getElementById('teacherPanel').classList.remove('hidden');
                 } else {
-                    if(document.getElementById('dashboardHome')) document.getElementById('dashboardHome').classList.remove('hidden');
+                    document.getElementById('dashboardHome').classList.remove('hidden');
+                    document.getElementById('studentStats').classList.remove('hidden');
                     renderDashboard();
                 }
 
-        
                 document.getElementById('coins').innerText = data.bpcoins || 0;
                 document.getElementById('progText').innerText = (data.progress || 0) + "%";
                 document.getElementById('progBar').style.width = (data.progress || 0) + "%";
-
             } else {
                 showMsg("Pending Approval from Admin.");
                 document.getElementById('authPage').classList.remove('hidden');
@@ -166,3 +167,4 @@ function renderDashboard() {
 document.getElementById('globalBackBtn').onclick = () => {
     alert("Back button clicked");
 };
+             
