@@ -88,8 +88,32 @@ onAuthStateChanged(auth, (user) => {
     if(user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             const data = snap.data();
+                  if(data && data.approved === true) {
+                document.getElementById('authPage').classList.add('hidden');
+                document.getElementById('mainHeader').classList.remove('hidden');
+                document.getElementById('appContent').classList.remove('hidden');
+              
+                const role = data.role; 
+                
       
-            if(data && data.approved === true) {
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('teacherPanel').classList.add('hidden');
+                document.getElementById('dashboardHome').classList.add('hidden');
+
+                if(role === 'admin') {
+                    document.getElementById('adminPanel').classList.remove('hidden');
+                } else if(role === 'teacher') {
+                    document.getElementById('teacherPanel').classList.remove('hidden');
+                } else {
+                    document.getElementById('dashboardHome').classList.remove('hidden');
+                    renderDashboard();
+                }
+
+                document.getElementById('coins').innerText = data.bpcoins || 0;
+                document.getElementById('progText').innerText = (data.progress || 0) + "%";
+                document.getElementById('progBar').style.width = (data.progress || 0) + "%";
+                  }
+        
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
