@@ -2,126 +2,100 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mNeet 2026 | Professional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>mNeet 2026 Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .skeleton { background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
+        :root { --accent: #eab308; --bg: #020617; }
+        body { background-color: var(--bg); -webkit-tap-highlight-color: transparent; }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        .skeleton { background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .nav-tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
     </style>
 </head>
-<body class="bg-[#020617] text-slate-200 font-sans selection:bg-yellow-500/30">
+<body class="text-slate-200">
 
-    <header id="mainHeader" class="hidden fixed top-0 w-full bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-800 p-4 z-50 flex justify-between items-center shadow-2xl">
-        <button id="globalBackBtn" class="text-yellow-500 text-xl hover:scale-110 transition-all"><i class="fas fa-arrow-left"></i></button>
-        <div class="italic font-black text-yellow-500 text-2xl tracking-tighter">mNeet</div>
+    <header id="mainHeader" class="hidden fixed top-0 w-full glass p-4 z-50 flex justify-between items-center shadow-2xl">
+        <button id="globalBackBtn" class="w-10 h-10 flex items-center justify-center rounded-full active:bg-slate-800 transition-all">
+            <i class="fas fa-arrow-left text-yellow-500"></i>
+        </button>
+        <div class="font-black text-2xl tracking-tighter italic text-yellow-500">mNeet <span class="text-[10px] uppercase not-italic text-slate-500">2026</span></div>
         <div class="flex items-center gap-3">
-            <div class="bg-yellow-500 text-black px-4 py-1.5 rounded-full font-black text-sm flex items-center gap-2 shadow-lg">
-                <i class="fas fa-coins text-[10px]"></i> <span id="coins">0</span>
+            <div class="bg-yellow-500 text-black px-3 py-1 rounded-full font-black text-xs shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                <span id="coins">0</span> <span class="text-[8px]">BP</span>
             </div>
-            <button id="logoutBtn" class="text-slate-400 hover:text-red-500 transition-colors"><i class="fas fa-power-off"></i></button>
+            <button id="logoutBtn" class="text-slate-500"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
 
-    <div id="authPage" class="flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[3rem] border border-slate-800 shadow-2xl">
-            <h1 class="text-5xl font-black text-yellow-500 text-center mb-8 italic">mNeet</h1>
+    <div id="authPage" class="min-h-screen flex items-center justify-center p-6">
+        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[3rem] border border-slate-800 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-8 opacity-10"><i class="fas fa-stethoscope text-6xl text-yellow-500"></i></div>
+            <h1 class="text-4xl font-black text-yellow-500 mb-2 italic">Welcome</h1>
+            <p class="text-slate-500 text-[10px] uppercase tracking-widest mb-8">Authorized Medical Aspirants Only</p>
+            
             <div id="signupFields" class="hidden space-y-4 mb-4">
-                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <input type="text" id="regTxn" placeholder="Payment Transaction ID" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
-                    <option value="student">Role: Student</option>
-                    <option value="teacher">Role: Teacher</option>
-                    <option value="admin">Role: Admin</option>
+                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-500 transition-all">
+                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-500">
+                <input type="text" id="regTxn" placeholder="Payment Transaction ID" class="w-full p-4 rounded-2xl bg-slate-950 border border-yellow-900/30 outline-none border-dashed focus:border-yellow-500">
+                <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
+                    <option value="student">Student Account</option>
+                    <option value="teacher">Teacher Account</option>
+                    <option value="admin">Administrator</option>
                 </select>
             </div>
+
             <div class="space-y-4">
-                <input type="email" id="email" placeholder="Email" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-slate-950 hover:bg-yellow-500 transition-all">Continue</button>
+                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-500 transition-all">
+                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-500 transition-all">
+                <button id="authBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black uppercase text-slate-950 transition-all active:scale-95 shadow-lg">Continue</button>
             </div>
-            <button id="toggleAuth" class="w-full text-center mt-6 text-yellow-600 text-xs font-bold uppercase underline tracking-widest">Switch to Create Account</button>
+            
+            <button id="toggleAuth" class="w-full text-center mt-6 text-slate-500 text-[10px] font-bold uppercase underline underline-offset-4 tracking-tighter">Request New Access</button>
             <p id="authMsg" class="mt-4 text-center text-red-500 text-xs font-bold"></p>
         </div>
     </div>
 
     <main id="appContent" class="hidden pt-28 p-6 max-w-2xl mx-auto pb-32">
         
-        <div id="noticeContainer" class="mb-6 bg-yellow-500/10 border border-yellow-500/20 p-3 rounded-2xl overflow-hidden">
-            <marquee id="adminNotice" class="text-yellow-500 text-[10px] font-black uppercase italic">Loading latest updates...</marquee>
+        <div id="dashboardTabs" class="flex items-center gap-8 border-b border-slate-800 mb-8 overflow-x-auto no-scrollbar">
+            <button onclick="changeTab('study')" id="tabStudy" class="nav-tab active pb-2 font-black text-xs uppercase tracking-widest whitespace-nowrap">Let's Study</button>
+            <button onclick="changeTab('ncert')" id="tabNcert" class="nav-tab pb-2 text-slate-500 font-black text-xs uppercase tracking-widest whitespace-nowrap">NCERT Books</button>
+            <button onclick="changeTab('stats')" id="tabStats" class="nav-tab pb-2 text-slate-500 font-black text-xs uppercase tracking-widest whitespace-nowrap">Progress</button>
         </div>
 
-        <div id="studentStats" class="hidden mb-8 grid grid-cols-2 gap-4">
-            <div class="bg-slate-900 p-5 rounded-[2.5rem] border border-slate-800">
-                <span class="text-[10px] text-slate-500 font-bold uppercase">Learning Streak</span>
-                <div class="text-xl font-black text-orange-500 mt-1"><i class="fas fa-fire"></i> <span id="streakDay">1</span> Days</div>
-            </div>
-            <div class="bg-slate-900 p-5 rounded-[2.5rem] border border-slate-800 text-right">
-                <span class="text-[10px] text-slate-500 font-bold uppercase">Global Rank</span>
-                <div class="text-xl font-black text-yellow-500 mt-1">#<span id="userRank">--</span></div>
-            </div>
-            <div class="col-span-2 bg-slate-900 p-6 rounded-[2.5rem] border border-slate-800 mt-2">
-                <div class="flex justify-between mb-2">
-                    <span class="text-[10px] font-black text-slate-500 uppercase">Syllabus Completion</span>
-                    <span id="progText" class="text-yellow-500 font-black text-xs">0%</span>
-                </div>
-                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden"><div id="progBar" class="bg-yellow-500 h-full w-0 transition-all duration-1000"></div></div>
-            </div>
+        <div id="contentSection">
+            <div id="mainGrid" class="space-y-4"></div>
         </div>
 
-        <div id="teacherPanel" class="hidden space-y-6 mb-10">
-            <h2 class="text-2xl font-black text-blue-500 italic uppercase">Content Studio</h2>
-            <div class="p-6 bg-slate-900 rounded-[2.5rem] border border-slate-800 space-y-4 shadow-2xl">
-                <div class="grid grid-cols-2 gap-4">
-                    <select id="upSubject" class="p-4 rounded-2xl bg-slate-950 border border-slate-700 outline-none">
-                        <option value="1. Biology">01. Biology</option>
-                        <option value="2. Physics">02. Physics</option>
-                        <option value="3. Chemistry">03. Chemistry</option>
-                    </select>
-                    <input type="number" id="upChapterNum" placeholder="Ch. No" class="p-4 rounded-2xl bg-slate-950 border border-slate-700 outline-none">
-                </div>
-                <input type="text" id="upChapter" placeholder="Chapter Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-700 outline-none">
-                <input type="text" id="upTopic" placeholder="Topic Title" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-700 outline-none">
-                <input type="text" id="upLink" placeholder="Video Link" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-700 outline-none text-blue-400">
-                <button id="uploadBtn" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase hover:bg-blue-500 transition-all">Publish Content</button>
+        <section id="teacherPanel" class="hidden mt-10 p-6 glass rounded-[2.5rem] border-blue-900/20">
+            <h2 class="text-xl font-black text-blue-500 uppercase italic mb-4">Content Studio</h2>
+            <div class="space-y-3">
+                <select id="upType" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold">
+                    <option value="video">Video Lecture</option>
+                    <option value="pdf">NCERT PDF Document</option>
+                </select>
+                <select id="upSubject" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs font-bold"></select>
+                <input type="text" id="upChapter" placeholder="Chapter Name" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800">
+                <input type="text" id="upTopic" placeholder="Topic / PDF Title" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800">
+                <input type="text" id="upLink" placeholder="Source URL (Drive/YouTube)" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-blue-400">
+                <button id="uploadBtn" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-xs tracking-widest active:scale-95 transition-all">Publish Content</button>
             </div>
-        </div>
+        </section>
 
-        <div id="adminPanel" class="hidden space-y-6 mb-10">
+        <section id="adminPanel" class="hidden mt-10 space-y-4">
             <div class="flex justify-between items-center">
-                <h2 class="text-2xl font-black text-red-500 italic uppercase">Master Control</h2>
-                <div class="bg-red-500/10 text-red-500 px-3 py-1 rounded-full text-[10px] font-bold">Revenue: $<span id="revenue">0</span></div>
+                <h2 class="text-xl font-black text-red-500 uppercase italic">Admin Panel</h2>
+                <div class="text-[10px] font-black bg-red-500/10 text-red-500 px-3 py-1 rounded-full uppercase">Pending Approvals</div>
             </div>
-            <div class="bg-slate-900 rounded-[2.5rem] border border-slate-800 overflow-hidden shadow-2xl">
-                <table class="w-full text-left text-[11px]">
-                    <thead class="bg-slate-800 text-slate-500 uppercase">
-                        <tr><th class="p-4">User</th><th class="p-4">TXN ID</th><th class="p-4 text-right">Action</th></tr>
-                    </thead>
-                    <tbody id="adminUserTable" class="divide-y divide-slate-800"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="dashboardHome" class="hidden">
-            <div class="relative mb-6">
-                <input type="text" id="searchBar" placeholder="Search topics or chapters..." class="w-full p-4 pl-12 rounded-2xl bg-slate-900 border border-slate-800 outline-none focus:border-yellow-500">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-slate-600"></i>
-            </div>
-            <div id="subjectGrid" class="space-y-4"></div>
-        </div>
-
-        <div id="leaderboard" class="hidden mt-10">
-            <h3 class="text-xs font-black text-slate-500 uppercase mb-4 tracking-widest">Global Leaderboard</h3>
-            <div id="leaderboardList" class="bg-slate-900 rounded-[2.5rem] border border-slate-800 overflow-hidden divide-y divide-slate-800"></div>
-        </div>
+            <div id="adminUserTable" class="space-y-3"></div>
+        </section>
 
     </main>
 
     <script type="module" src="app.js"></script>
 </body>
-                                                                                      </html>
+                    </html>
     
