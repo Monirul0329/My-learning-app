@@ -18,54 +18,53 @@
     </header>
 
     <div id="authPage" class="flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
+        <div class="w-full max-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
             <h1 class="text-5xl font-black text-yellow-500 text-center mb-8 italic tracking-tighter">mNeet</h1>
             
             <div id="signupForm" class="hidden space-y-4 mb-4">
-                <input type="text" id="regName" placeholder="Student Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
+                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
                 <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
-                <input type="text" id="regTxn" placeholder="Transaction ID (Payment)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
+                <input type="text" id="regTxn" placeholder="Transaction ID" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
                 <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-slate-400">
                     <option value="student">Role: Student</option>
                     <option value="teacher">Role: Teacher</option>
+                    <option value="admin">Role: Admin</option>
                 </select>
             </div>
 
             <div class="space-y-4">
                 <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
                 <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                
-                <button id="authBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 uppercase shadow-lg transition-all active:scale-95">Login Now</button>
+                <button id="authBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 uppercase shadow-lg">Login Now</button>
             </div>
             
-            <div class="flex justify-between text-[11px] mt-6 px-2 font-black text-slate-500 uppercase tracking-widest">
+            <div class="flex justify-between text-[11px] mt-6 px-2 font-black text-slate-500 uppercase">
                 <button id="forgotBtn" class="hover:text-yellow-500">Forgot Password?</button>
-                <button id="toggleAuth" class="text-yellow-600 hover:text-yellow-400">Create Account</button>
+                <button id="toggleAuth" class="text-yellow-600">Create Account</button>
             </div>
             <p id="authMsg" class="text-center text-yellow-500 mt-6 text-xs font-bold bg-yellow-500/10 py-2 rounded-lg hidden"></p>
         </div>
     </div>
 
     <main id="appContent" class="hidden pt-28 p-6 max-w-2xl mx-auto">
-        <div id="adminPanel" class="hidden space-y-4 mb-8">
-    <h2 class="text-2xl font-black text-red-500 uppercase italic">Admin Dashboard</h2>
-    <div class="p-6 bg-red-500/10 border border-red-500/30 rounded-[2rem]">
-        <p class="text-sm mb-4 text-red-200">Manage Users & Approvals</p>
-        <button class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">Pending Approvals</button>
-    </div>
-</div>
-
-<div id="teacherPanel" class="hidden space-y-4 mb-8">
-    <h2 class="text-2xl font-black text-blue-500 uppercase italic">Teacher Dashboard</h2>
-    <div class="p-6 bg-blue-500/10 border border-blue-500/30 rounded-[2rem]">
-        <p class="text-sm mb-4 text-blue-200">Upload New Content for Students</p>
-        <button class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Upload Video/PDF</button>
-    </div>
-</div>
         
-        <div class="bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8">
+        <div id="adminPanel" class="hidden space-y-4 mb-8">
+            <h2 class="text-2xl font-black text-red-500 uppercase italic">Admin Dashboard</h2>
+            <div class="p-6 bg-red-500/10 border border-red-500/30 rounded-[2rem]">
+                <button class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">Manage Users</button>
+            </div>
+        </div>
+
+        <div id="teacherPanel" class="hidden space-y-4 mb-8">
+            <h2 class="text-2xl font-black text-blue-500 uppercase italic">Teacher Dashboard</h2>
+            <div class="p-6 bg-blue-500/10 border border-blue-500/30 rounded-[2rem]">
+                <button class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Upload Content</button>
+            </div>
+        </div>
+
+        <div id="studentStats" class="hidden bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8">
             <div class="flex justify-between items-end mb-3">
-                <span class="text-sm font-bold text-slate-400">Total Course Progress</span>
+                <span class="text-sm font-bold text-slate-400">Course Progress</span>
                 <span id="progText" class="text-2xl font-black text-yellow-500">0%</span>
             </div>
             <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
@@ -73,30 +72,10 @@
             </div>
         </div>
 
-        <div id="dashboardHome">
-    <div id="subjectGrid" class="grid grid-cols-1 gap-4"></div>
+        <div id="dashboardHome" class="hidden">
+            <div id="subjectGrid" class="grid grid-cols-1 gap-4"></div>
         </div>
-        
-            <div class="p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center group cursor-pointer hover:border-yellow-500/50 transition-all">
-                <div>
-                    <h3 class="text-xl font-black text-slate-100 italic"
-                        <div class="p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center group cursor-pointer hover:border-yellow-500/50 transition-all">
-    <div>
-        <h3 class="text-xl font-black text-slate-100 italic">Biology</h3>
-        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">NCERT Chapter-wise</p>
-    </div>
-    <div class="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center text-yellow-500 group-hover:bg-yellow-500 group-hover:text-black transition-all">
-        <i class="fas fa-play ml-1"></i>
-    </div>
-                </div>
-            </h3>
-                    <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">NCERT Chapter-wise</p>
-                </div>
-                <div class="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center text-yellow-500 group-hover:bg-yellow-500 group-hover:text-black transition-all">
-                    <i class="fas fa-play ml-1"></i>
-                </div>
-             </div>
-        </div>
+
     </main>
 
     <script type="module" src="app.js"></script>
