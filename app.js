@@ -1,5 +1,29 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+        
+const syllabusData = {
+    "Let's Study": {
+        "Biology": [
+            { chapter: "The Living World", topics: ["What is Living?", "Taxonomic Categories"] },
+            { chapter: "Biological Classification", topics: ["Kingdom Monera", "Kingdom Protista", "Viruses"] }
+        ],
+        "Physics": [
+            { chapter: "Units and Measurements", topics: ["SI Units", "Dimensional Analysis"] },
+            { chapter: "Motion in a Straight Line", topics: ["Speed & Velocity", "Acceleration"] }
+        ],
+        "Chemistry": [
+            { chapter: "Some Basic Concepts", topics: ["Mole Concept", "Stoichiometry"] },
+            { chapter: "Structure of Atom", topics: ["Bohr's Model", "Quantum Numbers"] }
+        ]
+    },
+    "NCERT Books Reading": {
+        "Biology": ["Class 11 Bio PDF", "Class 12 Bio PDF"],
+        "Physics": ["Class 11 Physics PDF", "Class 12 Physics PDF"],
+        "Chemistry": ["Class 11 Chem PDF", "Class 12 Chem PDF"]
+    }
+};
+
+onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -74,6 +98,8 @@ onAuthStateChanged(auth, (user) => {
                 document.getElementById('coins').innerText = data.bp_coins || 0;
                 document.getElementById('progText').innerText = (data.progress || 0) + "%";
                 document.getElementById('progBar').style.width = (data.progress || 0) + "%";
+              renderDashboard();
+              
             } else {
                 showMsg("Pending Approval from Admin.");
             }
@@ -85,6 +111,36 @@ function showMsg(text) {
     authMsg.innerText = text;
     authMsg.classList.remove('hidden');
 }
+function renderDashboard() {
+    const grid = document.getElementById('subjectGrid');
+    grid.innerHTML = ""; 
+
+    Object.keys(syllabusData).forEach(sectionTitle => {
+        const sectionHeader = document.createElement('h2');
+        sectionHeader.className = "text-xl font-black text-yellow-500 mt-8 mb-4 uppercase tracking-tighter";
+        sectionHeader.innerText = sectionTitle;
+        grid.appendChild(sectionHeader);
+
+        const sectionContent = syllabusData[sectionTitle];
+        
+        Object.keys(sectionContent).forEach(subject => {
+            const card = document.createElement('div');
+            card.className = "p-6 bg-[#0f172a] rounded-[2rem] border border-slate-800 flex justify-between items-center mb-4 hover:border-yellow-500/50 transition-all cursor-pointer";
+            card.innerHTML = `
+                <div>
+                    <h3 class="text-xl font-black text-slate-100 italic">${subject}</h3>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">${sectionTitle === "Let's Study" ? "Video & Quiz" : "PDF Library"}</p>
+                </div>
+                <div class="h-12 w-12 rounded-full bg-slate-800 flex items-center justify-center text-yellow-500">
+                    <i class="fas ${sectionTitle === "Let's Study" ? "fa-play" : "fa-book-open"}"></i>
+                </div>
+            `;
+            card.onclick = () => alert(`Opening ${subject} in ${sectionTitle}`);
+            grid.appendChild(card);
+        });
+    });
+                  }
+                   
 
 document.getElementById('globalBackBtn').onclick = () => {
     window.history.back();
