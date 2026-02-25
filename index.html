@@ -107,7 +107,16 @@
         </div>
 
         <div id="dashboardHome" class="hidden">
-            <div id="subjectGrid" class="grid grid-cols-1 gap-4"></div>
+            <div id="subjectGrid" 
+                <div class="mt-12 mb-8">
+    <h3 class="text-xl font-black text-yellow-500 italic uppercase tracking-tighter mb-4 flex items-center gap-2">
+        <i class="fas fa-trophy"></i> Top Achievers
+    </h3>
+    <div id="leaderboardList" class="bg-[#0f172a] rounded-[2rem] border border-slate-800 overflow-hidden shadow-2xl">
+        <div class="p-4 text-center text-slate-500 text-xs italic">Loading rankings...</div>
+    </div>
+            </div>
+            class="grid grid-cols-1 gap-4"></div>
         </div>
 
     </main>
