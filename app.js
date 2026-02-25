@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, addDoc, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, getDocs, updateDoc, addDoc, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDlmQWV3IN_asZolPyaBLBb7L_RG0uriZM",
@@ -14,11 +14,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-ll
+
 const SYLLABUS = {
-    "01. Biology": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Morphology of Flowering Plants", "Structural Organisation", "Cell: The Unit of Life", "Biomolecules"],
-    "02. Physics": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles"],
-    "03. Chemistry": ["Some Basic Concepts", "Structure of Atom", "Classification of Elements", "Chemical Bonding", "Thermodynamics", "Equilibrium"]
+    "01. Biology": ["The Living World", "Plant Kingdom", "Cell Cycle", "Human Physiology"],
+    "02. Physics": ["Kinematics", "Laws of Motion", "Optics", "Thermodynamics"],
+    "03. Chemistry": ["Atomic Structure", "Periodic Table", "Organic Chemistry"]
 };
 
 let currentTab = 'study';
@@ -34,9 +34,9 @@ onAuthStateChanged(auth, (user) => {
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                initUserInterface();
+                initApp();
             } else if (u) {
-                alert("Account Pending Approval by Admin.");
+                document.getElementById('authMsg').innerText = "Access Pending. Contact Admin.";
                 signOut(auth);
             }
         });
@@ -47,50 +47,35 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-function initUserInterface() {
-    const r = userData.role;
-    document.getElementById('adminPanel').classList.toggle('hidden', r !== 'admin');
-    document.getElementById('teacherPanel').classList.toggle('hidden', r !== 'teacher');
+function initApp() {
+    document.getElementById('adminPanel').classList.toggle('hidden', userData.role !== 'admin');
+    document.getElementById('teacherPanel').classList.toggle('hidden', userData.role !== 'teacher');
     document.getElementById('coins').innerText = userData.bpcoins || 0;
-    
-    if(r === 'admin') loadAdminData();
-    if(r === 'teacher') loadTeacherForm();
+    if(userData.role === 'admin') loadAdminData();
+    if(userData.role === 'teacher') loadTeacherForm();
     renderSubjects();
 }
 
 window.changeTab = (tab) => {
     currentTab = tab;
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active', 'text-yellow-500'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.add('text-slate-500'));
-    const activeTab = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-    activeTab.classList.add('active', 'text-yellow-500');
+    document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active', 'text-yellow-500'));
+    document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active', 'text-yellow-500');
     navHistory = [];
     renderSubjects();
 };
 
 document.getElementById('globalBackBtn').onclick = () => {
-    if(navHistory.length > 0) {
-        const lastPage = navHistory.pop();
-        lastPage();
-    }
+    if(navHistory.length > 0) (navHistory.pop())();
 };
 
 function renderSubjects() {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-2">${currentTab === 'study' ? "Let's Study" : "NCERT Books"}</h2>`;
+    grid.innerHTML = `<p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-4">NEET 2026 - ${currentTab === 'study' ? 'Lectures' : 'PDFs'}</p>`;
     
     Object.keys(SYLLABUS).forEach(sub => {
         const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2.5rem] border border-slate-800 flex justify-between items-center cursor-pointer hover:border-yellow-600 transition-all active:scale-95";
-        div.innerHTML = `
-            <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 font-black italic">${sub.charAt(0)}${sub.charAt(1)}</div>
-                <div>
-                    <h3 class="font-black italic uppercase text-sm tracking-tight">${sub.split('. ')[1]}</h3>
-                    <p class="text-[8px] text-slate-600 uppercase font-bold tracking-widest">NEET 2026 Syllabus</p>
-                </div>
-            </div>
-            <i class="fas fa-arrow-right text-slate-800"></i>`;
+        div.className = "p-5 bg-slate-900 rounded-3xl border border-slate-800 flex justify-between items-center cursor-pointer active:scale-95 transition-all";
+        div.innerHTML = `<div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-500 font-bold">${sub.charAt(1)}</div><span class="font-black italic uppercase text-xs">${sub.split('. ')[1]}</span></div><i class="fas fa-chevron-right text-slate-700"></i>`;
         div.onclick = () => {
             navHistory.push(() => renderSubjects());
             renderChapters(sub);
@@ -101,19 +86,18 @@ function renderSubjects() {
 
 async function renderChapters(subject) {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<div class="mb-6"><span class="text-yellow-500 text-[9px] font-black uppercase tracking-widest">${subject}</span><h2 class="text-2xl font-black italic uppercase">Chapters</h2></div>`;
+    grid.innerHTML = `<h2 class="text-yellow-500 font-black italic mb-6 text-xl">${subject}</h2>`;
     
-    const contentType = currentTab === 'study' ? 'video' : 'pdf';
-    const q = query(collection(db, "materials"), where("subject", "==", subject), where("type", "==", contentType));
+    const q = query(collection(db, "materials"), where("subject", "==", subject), where("type", "==", (currentTab === 'study' ? 'video' : 'pdf')));
     const snap = await getDocs(q);
-    const uniqueChapters = [...new Set(snap.docs.map(doc => doc.data().chapter))];
+    const chapters = [...new Set(snap.docs.map(d => d.data().chapter))];
 
-    if(uniqueChapters.length === 0) grid.innerHTML += `<p class="text-slate-600 text-xs italic">No content uploaded yet.</p>`;
+    if(chapters.length === 0) grid.innerHTML += `<p class="text-slate-600 italic text-xs">Empty Chapter.</p>`;
 
-    uniqueChapters.forEach(ch => {
+    chapters.forEach(ch => {
         const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/40 rounded-3xl mb-3 border border-slate-800 flex justify-between items-center cursor-pointer active:scale-95";
-        div.innerHTML = `<span class="font-bold text-sm tracking-tight">${ch}</span><i class="fas fa-plus text-[10px] text-slate-700"></i>`;
+        div.className = "p-4 bg-slate-800/40 rounded-2xl mb-3 border border-slate-800 flex justify-between items-center cursor-pointer";
+        div.innerHTML = `<span class="font-bold text-sm">${ch}</span><i class="fas fa-plus text-[10px] text-yellow-500 opacity-50"></i>`;
         div.onclick = () => {
             navHistory.push(() => renderChapters(subject));
             renderTopics(subject, ch);
@@ -124,41 +108,31 @@ async function renderChapters(subject) {
 
 async function renderTopics(subject, chapter) {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-lg font-black text-slate-400 mb-6 italic border-l-4 border-yellow-500 pl-4">${chapter}</h2>`;
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold italic mb-6 border-l-4 border-yellow-500 pl-3">${chapter}</h2>`;
     
-    const contentType = currentTab === 'study' ? 'video' : 'pdf';
-    const q = query(collection(db, "materials"), where("subject", "==", subject), where("chapter", "==", chapter), where("type", "==", contentType));
+    const q = query(collection(db, "materials"), where("subject", "==", subject), where("chapter", "==", chapter), where("type", "==", (currentTab === 'study' ? 'video' : 'pdf')));
     const snap = await getDocs(q);
 
-    snap.forEach((docSnap, index) => {
+    snap.forEach((docSnap, i) => {
         const d = docSnap.data();
         const div = document.createElement('div');
         div.className = "p-4 bg-slate-950 rounded-2xl mb-3 flex justify-between items-center border border-slate-900";
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <span class="text-[9px] font-black text-slate-700">${index + 1}</span>
-                <span class="text-xs font-semibold text-slate-300">${d.topic}</span>
-            </div>
-            <a href="${d.link}" target="_blank" onclick="rewardUser()" class="${contentType==='video'?'bg-red-600':'bg-blue-600'} text-white px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-tighter shadow-lg">${contentType==='video'?'Watch':'Download'}</a>`;
+        div.innerHTML = `<div class="text-xs font-semibold"><span class="text-slate-600 mr-2">${i+1}.</span>${d.topic}</div>
+                         <a href="${d.link}" target="_blank" onclick="rewardUser()" class="${currentTab==='study'?'bg-red-600':'bg-blue-600'} px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Open</a>`;
         grid.appendChild(div);
     });
 }
 
 async function loadAdminData() {
     const container = document.getElementById('adminUserTable');
-    const q = query(collection(db, "users"), where("approved", "==", false));
-    onSnapshot(q, (snap) => {
+    onSnapshot(query(collection(db, "users"), where("approved", "==", false)), (snap) => {
         container.innerHTML = "";
         snap.forEach(uDoc => {
             const u = uDoc.data();
             const div = document.createElement('div');
-            div.className = "p-5 bg-slate-900 rounded-3xl border border-red-900/20 flex justify-between items-center shadow-xl";
-            div.innerHTML = `
-                <div>
-                    <div class="text-xs font-black uppercase text-slate-200">${u.name}</div>
-                    <div class="text-[9px] font-mono text-yellow-500 mt-1">Txn: ${u.txn || 'No ID'}</div>
-                </div>
-                <button onclick="approveUser('${uDoc.id}')" class="bg-green-600 text-[10px] font-black px-4 py-2 rounded-xl active:scale-90">APPROVE</button>`;
+            div.className = "p-4 bg-slate-900 rounded-2xl flex justify-between items-center border border-red-900/20";
+            div.innerHTML = `<div><div class="font-bold text-xs">${u.name}</div><div class="text-[9px] text-yellow-500 font-mono">${u.txn}</div></div>
+                             <button onclick="approveUser('${uDoc.id}')" class="bg-green-600 text-[9px] font-black px-4 py-2 rounded-xl">APPROVE</button>`;
             container.appendChild(div);
         });
     });
@@ -181,29 +155,26 @@ document.getElementById('uploadBtn').onclick = async () => {
         link: document.getElementById('upLink').value,
         timestamp: Date.now()
     };
-    if(!data.chapter || !data.topic || !data.link) return alert("Fill all details");
     await addDoc(collection(db, "materials"), data);
-    alert("Content Published Successfully!");
+    alert("Live Now!");
 };
 
 window.rewardUser = async () => {
-    const userRef = doc(db, "users", auth.currentUser.uid);
-    await updateDoc(userRef, { bpcoins: (userData.bpcoins || 0) + 5 });
+    await updateDoc(doc(db, "users", auth.currentUser.uid), { bpcoins: (userData.bpcoins || 0) + 5 });
 };
 
 document.getElementById('toggleAuth').onclick = () => {
-    const isLogin = document.getElementById('signupFields').classList.contains('hidden');
+    const isL = document.getElementById('signupFields').classList.contains('hidden');
     document.getElementById('signupFields').classList.toggle('hidden');
-    document.getElementById('authBtn').innerText = isLogin ? 'Create Account' : 'Continue';
+    document.getElementById('authBtn').innerText = isL ? 'Join mNeet' : 'Continue';
 };
 
 document.getElementById('authBtn').onclick = async () => {
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('pass').value.trim();
-    const isSignup = !document.getElementById('signupFields').classList.contains('hidden');
-
+    const isS = !document.getElementById('signupFields').classList.contains('hidden');
     try {
-        if(isSignup) {
+        if(isS) {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
                 name: document.getElementById('regName').value,
@@ -212,11 +183,10 @@ document.getElementById('authBtn').onclick = async () => {
                 role: document.getElementById('regRole').value,
                 email, approved: false, bpcoins: 0
             });
-            alert("Application Sent! Please wait for Admin Approval.");
-        } else {
-            await signInWithEmailAndPassword(auth, email, pass);
-        }
+            alert("Sent for Approval.");
+        } else { await signInWithEmailAndPassword(auth, email, pass); }
     } catch(e) { document.getElementById('authMsg').innerText = e.message; }
 };
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
+                
