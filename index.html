@@ -47,8 +47,18 @@
     </div>
 
     <main id="appContent" class="hidden pt-28 p-6 max-w-2xl mx-auto">
-        
         <div id="adminPanel" class="hidden space-y-4 mb-8">
+    <h2 class="text-3xl font-black text-red-500 uppercase italic tracking-tighter">Admin Control</h2>
+    <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-[2.5rem]">
+        <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
+            <i class="fas fa-user-clock"></i> Pending Approvals
+        </h3>
+        <div id="pendingUserList" class="space-y-3">
+            <p class="text-slate-500 text-sm italic">No pending requests...</p>
+        </div>
+    </div>
+        </div>
+        
             <h2 class="text-2xl font-black text-red-500 uppercase italic">Admin Dashboard</h2>
             <div class="p-6 bg-red-500/10 border border-red-500/30 rounded-[2rem]">
                 <button class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">Manage Users</button>
