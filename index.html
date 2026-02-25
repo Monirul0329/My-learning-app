@@ -9,114 +9,35 @@
 </head>
 <body class="bg-[#020617] text-slate-200 font-sans">
 
-    <a href="https://wa.me/YOUR_NUMBER" target="_blank" class="fixed bottom-6 right-6 bg-green-500 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-50">
-        <i class="fab fa-whatsapp text-3xl text-white"></i>
-    </a>
-
     <header id="mainHeader" class="hidden fixed top-0 w-full bg-[#0f172a] border-b border-slate-800 p-4 z-50 flex justify-between items-center shadow-xl">
         <button id="globalBackBtn" class="text-yellow-500 text-xl"><i class="fas fa-arrow-left"></i></button>
-        <div class="italic font-black text-yellow-500 text-2xl tracking-tighter">mNeet</div>
-        <div class="flex items-center gap-2">
-            <div id="bpCoinDisplay" class="bg-yellow-500 text-black px-4 py-1.5 rounded-full font-black text-sm flex items-center gap-2">
-                <i class="fas fa-coins text-xs"></i> <span id="coins">0</span> <span class="text-[10px]">BP</span>
-            </div>
-            <button id="logoutBtn" class="ml-2 text-slate-400 hover:text-red-500 transition-colors">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
+        <div class="italic font-black text-yellow-500 text-2xl tracking-tighter mx-auto">mNeet</div>
+        <div id="bpCoinDisplay" class="bg-yellow-500 text-black px-4 py-1.5 rounded-full font-black text-sm flex items-center gap-2">
+            <i class="fas fa-coins text-xs"></i> <span id="coins">0</span>
         </div>
     </header>
 
-    <div id="authPage" class="flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
-            <h1 class="text-5xl font-black text-yellow-500 text-center mb-8 italic tracking-tighter">mNeet</h1>
-            
-            <div id="signupForm" class="hidden space-y-4 mb-4">
-                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
-                <input type="text" id="regTxn" placeholder="Transaction ID" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none">
-                <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 text-slate-400">
-                    <option value="student">Role: Student</option>
-                    <option value="teacher">Role: Teacher</option>
-                    <option value="admin">Role: Admin</option>
-                </select>
-            </div>
-
-            <div class="space-y-4">
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500">
-                <button id="authBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black text-slate-950 uppercase shadow-lg">Login Now</button>
-            </div>
-            
-            <div class="flex justify-between text-[11px] mt-6 px-2 font-black text-slate-500 uppercase">
-                <button id="forgotBtn" class="hover:text-yellow-500">Forgot Password?</button>
-                <button id="toggleAuth" class="text-yellow-600">Create Account</button>
-            </div>
-            <p id="authMsg" class="text-center text-yellow-500 mt-6 text-xs font-bold bg-yellow-500/10 py-2 rounded-lg hidden"></p>
-        </div>
-    </div>
-
     <main id="appContent" class="hidden pt-28 p-6 max-w-2xl mx-auto">
-        
-        <div id="quizSection" class="hidden space-y-6">
-            <div class="flex justify-between items-center">
-                <button onclick="renderDashboard()" class="text-xs text-slate-400">← Back</button>
-                <span class="text-yellow-500 font-black italic">NCERT LINE QUIZ</span>
-            </div>
-            <div class="p-8 bg-[#0f172a] rounded-[2.5rem] border-2 border-yellow-500/20 shadow-2xl">
-                <p id="quizLine" class="text-xl font-medium leading-relaxed text-slate-100 mb-6"></p>
-                <input type="text" id="quizAnswer" placeholder="Type missing word..." class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 mb-4 text-center font-bold">
-                <button id="checkAnsBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black text-slate-950 uppercase">Check Answer</button>
-            </div>
-        </div>
-
-        <div id="adminPanel" class="hidden space-y-6 mb-8">
-            <h2 class="text-3xl font-black text-red-500 uppercase italic tracking-tighter">Admin Control</h2>
-            <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-[2.5rem]">
-                <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
-                    <i class="fas fa-user-clock"></i> Pending Approvals
-                </h3>
-                <div id="pendingUserList" class="space-y-3">
-                    <p class="text-slate-500 text-sm italic text-center py-4">No pending requests...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="teacherPanel" class="hidden space-y-6 mb-8">
-            <h2 class="text-3xl font-black text-blue-500 uppercase italic tracking-tighter text-center">Teacher Panel</h2>
-            <div class="p-6 bg-yellow-500/5 border border-yellow-500/20 rounded-[2.5rem] space-y-4">
-                <h3 class="text-lg font-bold text-yellow-500 italic">Create NCERT Quiz</h3>
-                <textarea id="quizText" placeholder="Example: Mitochondria is the powerhouse..." class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 h-24 outline-none"></textarea>
-                <input type="text" id="quizCorrectAns" placeholder="Correct Word" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700">
-                <button id="uploadQuizBtn" class="w-full bg-yellow-600 py-3 rounded-2xl font-black text-slate-950 uppercase">Post Quiz</button>
-            </div>
-        </div>
-
-        <div id="studentStats" class="hidden bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8 shadow-xl">
+        <div id="studentStats" class="hidden bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8">
             <div class="flex justify-between items-end mb-3">
                 <span class="text-sm font-bold text-slate-400">Course Progress</span>
                 <span id="progText" class="text-2xl font-black text-yellow-500">0%</span>
             </div>
             <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden">
-                <div id="progBar" class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full w-0 transition-all duration-1000"></div>
+                <div id="progBar" class="bg-yellow-500 h-full w-0 transition-all duration-1000"></div>
             </div>
         </div>
 
         <div id="dashboardHome" class="hidden">
-            <div id="subjectGrid" class="grid grid-cols-1 gap-4 mb-8"></div>
-            
-            <div class="mt-12 mb-8">
-                <h3 class="text-xl font-black text-yellow-500 italic uppercase tracking-tighter mb-4 flex items-center gap-2">
-                    <i class="fas fa-trophy"></i> Top Achievers
-                </h3>
-                <div id="leaderboardList" class="bg-[#0f172a] rounded-[2rem] border border-slate-800 overflow-hidden shadow-2xl">
-                    <div class="p-4 text-center text-slate-500 text-xs italic">Loading rankings...</div>
-                </div>
-            </div>
+            <div id="subjectGrid" class="grid grid-cols-1 gap-4"></div>
         </div>
 
+        <div id="adminPanel" class="hidden space-y-6">
+            <h2 class="text-2xl font-black text-red-500 italic uppercase">Admin Master Control</h2>
+            <div id="pendingUserList" class="space-y-3"></div>
+        </div>
     </main>
 
     <script type="module" src="app.js"></script>
 </body>
-                    </html>
-                
+</html>
