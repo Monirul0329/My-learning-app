@@ -96,13 +96,17 @@ onAuthStateChanged(auth, (user) => {
                 
                 const role = data.role;
 
-                // Hide all sections first
+    
                 document.getElementById('adminPanel').classList.add('hidden');
                 document.getElementById('teacherPanel').classList.add('hidden');
                 document.getElementById('dashboardHome').classList.add('hidden');
                 document.getElementById('studentStats').classList.add('hidden');
 
                 if(role === 'admin') {
+    document.getElementById('adminPanel').classList.remove('hidden');
+    loadPendingUsers();
+                }
+              
                     document.getElementById('adminPanel').classList.remove('hidden');
                 } else if(role === 'teacher') {
                     document.getElementById('teacherPanel').classList.remove('hidden');
@@ -135,6 +139,48 @@ function showMsg(text) {
 }
 
 function renderDashboard() {
+  import { collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  
+async function loadPendingUsers() {
+    const listDiv = document.getElementById('pendingUserList');
+    if(!listDiv) return;
+  
+    const q = query(collection(db, "users"), where("approved", "==", false));
+    const querySnapshot = await getDocs(q);
+    
+    listDiv.innerHTML = "";
+
+    if(querySnapshot.empty) {
+        listDiv.innerHTML = "<p class='text-slate-500 text-xs italic'>No pending requests.</p>";
+        return;
+    }
+
+    querySnapshot.forEach((userDoc) => {
+        const user = userDoc.data();
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 p-4 rounded-2xl border border-slate-800 flex justify-between items-center";
+        card.innerHTML = `
+            <div>
+                <p class="font-bold text-slate-100">${user.name || 'Unknown'}</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest">${user.city} | Txn: ${user.txn}</p>
+            </div>
+            <button onclick="approveUser('${userDoc.id}')" class="bg-green-600 hover:bg-green-500 text-white text-xs px-4 py-2 rounded-xl font-bold transition-all">
+                Approve
+            </button>
+        `;
+        listDiv.appendChild(card);
+    });
+}
+
+window.approveUser = async (userId) => {
+    try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, { approved: true });
+        alert("User Approved Successfully!");
+        loadPendingUsers();
+    } catch(e) { alert("Error: " + e.message); }
+};
+  
     const grid = document.getElementById('subjectGrid');
     if(!grid) return;
     grid.innerHTML = ""; 
@@ -167,4 +213,38 @@ function renderDashboard() {
 document.getElementById('globalBackBtn').onclick = () => {
     alert("Back button clicked");
 };
-             
+             import { addDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const uploadBtn = document.getElementById('uploadBtn');
+if(uploadBtn) {
+    uploadBtn.onclick = async () => {
+        const subject = document.getElementById('upSubject').value;
+        const chapter = document.getElementById('upChapter').value.trim();
+        const topic = document.getElementById('upTopic').value.trim();
+        const link = document.getElementById('upLink').value.trim();
+
+        if(!chapter || !topic || !link) {
+            alert("Please fill all fields!");
+            return;
+        }
+
+        try {
+            await addDoc(collection(db, "study_materials"), {
+                subject,
+                chapter,
+                topic,
+                link,
+                createdAt: new Date(),
+                teacherEmail: auth.currentUser.email
+            });
+            alert("Content Uploaded Successfully! ✅");
+        
+            document.getElementById('upChapter').value = "";
+            document.getElementById('upTopic').value = "";
+            document.getElementById('upLink').value = "";
+        } catch(e) {
+            alert("Error: " + e.message);
+        }
+    };
+    }
+
