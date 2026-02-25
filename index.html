@@ -18,7 +18,7 @@
     </header>
 
     <div id="authPage" class="flex items-center justify-center min-h-screen p-4">
-        <div class="w-full max-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
+        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative">
             <h1 class="text-5xl font-black text-yellow-500 text-center mb-8 italic tracking-tighter">mNeet</h1>
             
             <div id="signupForm" class="hidden space-y-4 mb-4">
@@ -47,55 +47,56 @@
     </div>
 
     <main id="appContent" class="hidden pt-28 p-6 max-w-2xl mx-auto">
-        <div id="adminPanel" class="hidden space-y-4 mb-8">
-    <h2 class="text-3xl font-black text-red-500 uppercase italic tracking-tighter">Admin Control</h2>
-    <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-[2.5rem]">
-        <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
-            <i class="fas fa-user-clock"></i> Pending Approvals
-        </h3>
-        <div id="pendingUserList" class="space-y-3">
-            <p class="text-slate-500 text-sm italic">No pending requests...</p>
-        </div>
-    </div>
-        </div>
         
-            <h2 class="text-2xl font-black text-red-500 uppercase italic">Admin Dashboard</h2>
-            <div class="p-6 bg-red-500/10 border border-red-500/30 rounded-[2rem]">
-                <button class="bg-red-600 text-white px-6 py-3 rounded-xl font-bold">Manage Users</button>
+        <div id="quizSection" class="hidden space-y-6">
+            <div class="flex justify-between items-center">
+                <button onclick="renderDashboard()" class="text-xs text-slate-400">← Back</button>
+                <span class="text-yellow-500 font-black italic">NCERT LINE QUIZ</span>
+            </div>
+            <div class="p-8 bg-[#0f172a] rounded-[2.5rem] border-2 border-yellow-500/20 shadow-2xl">
+                <p id="quizLine" class="text-xl font-medium leading-relaxed text-slate-100 mb-6"></p>
+                <input type="text" id="quizAnswer" placeholder="Type missing word..." class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 outline-none focus:border-yellow-500 mb-4 text-center font-bold">
+                <button id="checkAnsBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black text-slate-950 uppercase">Check Answer</button>
+            </div>
+        </div>
+
+        <div id="adminPanel" class="hidden space-y-6 mb-8">
+            <h2 class="text-3xl font-black text-red-500 uppercase italic tracking-tighter">Admin Control</h2>
+            <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-[2.5rem]">
+                <h3 class="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-clock"></i> Pending Approvals
+                </h3>
+                <div id="pendingUserList" class="space-y-3">
+                    <p class="text-slate-500 text-sm italic text-center py-4">No pending requests...</p>
+                </div>
             </div>
         </div>
 
         <div id="teacherPanel" class="hidden space-y-6 mb-8">
-    <h2 class="text-3xl font-black text-blue-500 uppercase italic tracking-tighter">Teacher Panel</h2>
-    
-    <div class="p-6 bg-blue-500/5 border border-blue-500/20 rounded-[2.5rem] space-y-4">
-        <h3 class="text-lg font-bold text-blue-400 mb-2 italic">Upload New Study Material</h3>
-        
-        <select id="upSubject" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none text-slate-300">
-            <option value="Biology">Biology</option>
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-        </select>
-        
-        <input type="text" id="upChapter" placeholder="Chapter Name (e.g. Genetics)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none">
-        
-        <input type="text" id="upTopic" placeholder="Topic Name (e.g. Mendel's Law)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none">
-        
-        <input type="text" id="upLink" placeholder="Video Link (YouTube/Drive)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none text-blue-400">
-        
-        <button id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-white uppercase transition-all shadow-lg active:scale-95">
-            Post to Students
-        </button>
-    </div>
-        </div>
-        class="hidden space-y-4 mb-8">
-            <h2 class="text-2xl font-black text-blue-500 uppercase italic">Teacher Dashboard</h2>
-            <div class="p-6 bg-blue-500/10 border border-blue-500/30 rounded-[2rem]">
-                <button class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold">Upload Content</button>
+            <h2 class="text-3xl font-black text-blue-500 uppercase italic tracking-tighter text-center">Teacher Panel</h2>
+            
+            <div class="p-6 bg-yellow-500/5 border border-yellow-500/20 rounded-[2.5rem] space-y-4">
+                <h3 class="text-lg font-bold text-yellow-500 italic">Create NCERT Quiz</h3>
+                <textarea id="quizText" placeholder="Example: Mitochondria is the _____ of the cell." class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700 h-24 outline-none"></textarea>
+                <input type="text" id="quizCorrectAns" placeholder="Correct Word (e.g. Powerhouse)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-700">
+                <button id="uploadQuizBtn" class="w-full bg-yellow-600 py-3 rounded-2xl font-black text-slate-950 uppercase">Post Quiz</button>
+            </div>
+            
+            <div class="p-6 bg-blue-500/5 border border-blue-500/20 rounded-[2.5rem] space-y-4">
+                <h3 class="text-lg font-bold text-blue-400 mb-2 italic">Upload Study Material</h3>
+                <select id="upSubject" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none text-slate-300">
+                    <option value="Biology">Biology</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                </select>
+                <input type="text" id="upChapter" placeholder="Chapter Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none">
+                <input type="text" id="upTopic" placeholder="Topic Name" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none">
+                <input type="text" id="upLink" placeholder="Video Link (YouTube/Drive)" class="w-full p-4 rounded-2xl bg-slate-900 border border-slate-800 outline-none text-blue-400">
+                <button id="uploadBtn" class="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-2xl font-black text-white uppercase shadow-lg active:scale-95 transition-all">Post to Students</button>
             </div>
         </div>
 
-        <div id="studentStats" class="hidden bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8">
+        <div id="studentStats" class="hidden bg-slate-900/50 p-6 rounded-[2rem] border border-slate-800 mb-8 shadow-xl">
             <div class="flex justify-between items-end mb-3">
                 <span class="text-sm font-bold text-slate-400">Course Progress</span>
                 <span id="progText" class="text-2xl font-black text-yellow-500">0%</span>
