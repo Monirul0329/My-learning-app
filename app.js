@@ -11,6 +11,7 @@ const firebaseConfig = {
   appId: "1:944379440196:web:9d26b632b3e778d247e011",
   measurementId: "G-70T6K3DLGT"
 };
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -88,47 +89,42 @@ onAuthStateChanged(auth, (user) => {
     if(user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             const data = snap.data();
-                  if(data && data.approved === true) {
+            if(data && data.approved === true) {
+            
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
               
                 const role = data.role; 
                 
-      
-                document.getElementById('adminPanel').classList.add('hidden');
-                document.getElementById('teacherPanel').classList.add('hidden');
-                document.getElementById('dashboardHome').classList.add('hidden');
-
+                if(document.getElementById('adminPanel')) document.getElementById('adminPanel').classList.add('hidden');
+                if(document.getElementById('teacherPanel')) document.getElementById('teacherPanel').classList.add('hidden');
+                if(document.getElementById('dashboardHome')) document.getElementById('dashboardHome').classList.add('hidden');
                 if(role === 'admin') {
                     document.getElementById('adminPanel').classList.remove('hidden');
                 } else if(role === 'teacher') {
                     document.getElementById('teacherPanel').classList.remove('hidden');
                 } else {
-                    document.getElementById('dashboardHome').classList.remove('hidden');
+                    if(document.getElementById('dashboardHome')) document.getElementById('dashboardHome').classList.remove('hidden');
                     renderDashboard();
                 }
 
-                document.getElementById('coins').innerText = data.bpcoins || 0;
-                document.getElementById('progText').innerText = (data.progress || 0) + "%";
-                document.getElementById('progBar').style.width = (data.progress || 0) + "%";
-                  }
         
-                document.getElementById('authPage').classList.add('hidden');
-                document.getElementById('mainHeader').classList.remove('hidden');
-                document.getElementById('appContent').classList.remove('hidden');
-                
                 document.getElementById('coins').innerText = data.bpcoins || 0;
                 document.getElementById('progText').innerText = (data.progress || 0) + "%";
                 document.getElementById('progBar').style.width = (data.progress || 0) + "%";
-                renderDashboard();
+
             } else {
                 showMsg("Pending Approval from Admin.");
                 document.getElementById('authPage').classList.remove('hidden');
+                document.getElementById('mainHeader').classList.add('hidden');
+                document.getElementById('appContent').classList.add('hidden');
             }
         });
     } else {
         document.getElementById('authPage').classList.remove('hidden');
+        document.getElementById('mainHeader').classList.add('hidden');
+        document.getElementById('appContent').classList.add('hidden');
     }
 });
 
@@ -168,7 +164,5 @@ function renderDashboard() {
 }
 
 document.getElementById('globalBackBtn').onclick = () => {
-  
     alert("Back button clicked");
 };
-      
