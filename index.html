@@ -7,12 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#020617] text-slate-200 font-sans">
+<a href="https://wa.me/YOUR_NUMBER" target="_blank" class="fixed bottom-6 right-6 bg-green-500 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all z-50">
+    <i class="fab fa-whatsapp text-3xl text-white"></i>
+</a>
+    <body class="bg-[#020617] text-slate-200 font-sans">
 
     <header id="mainHeader" class="hidden fixed top-0 w-full bg-[#0f172a] border-b border-slate-800 p-4 z-50 flex justify-between items-center shadow-xl">
         <button id="globalBackBtn" class="text-yellow-500 text-xl"><i class="fas fa-arrow-left"></i></button>
         <div class="italic font-black text-yellow-500 text-2xl tracking-tighter">mNeet</div>
-        <div id="bpCoinDisplay" class="bg-yellow-500 text-black px-4 py-1.5 rounded-full font-black text-sm flex items-center gap-2">
+        <div id="bpCoinDisplay" 
+           <button id="logoutBtn" class="ml-4 text-slate-400 hover:text-red-500 transition-colors">
+    <i class="fas fa-sign-out-alt"></i>
+        </button>
+            class="bg-yellow-500 text-black px-4 py-1.5 rounded-full font-black text-sm flex items-center gap-2">
             <i class="fas fa-coins text-xs"></i> <span id="coins">0</span> <span class="text-[10px]">BP</span>
         </div>
     </header>
