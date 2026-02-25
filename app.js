@@ -166,6 +166,8 @@ function renderDashboard() {
     const grid = document.getElementById('subjectGrid');
     if(!grid) return;
     grid.innerHTML = ""; 
+    loadLeaderboard();
+
 
     // Quiz Card
     const quizCard = document.createElement('div');
@@ -204,6 +206,21 @@ function renderDashboard() {
             card.onclick = () => {
                 if(sectionTitle === "Let's Study") {
                     openChapterContent(subject, "Syllabus");
+                    // Video link-e click korle progress update hobe
+window.updateProgress = async () => {
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    const snap = await getDocs(query(collection(db, "users"), where("email", "==", auth.currentUser.email)));
+    
+    let currentProgress = 0;
+    snap.forEach(d => currentProgress = d.data().progress || 0);
+    
+    if(currentProgress < 100) {
+        await updateDoc(userRef, { 
+            progress: currentProgress + 5 // Protibar click-e 5% kore barbe
+        });
+    }
+};
+                    
                 } else {
                     alert("PDF Library is being updated!");
                 }
@@ -313,3 +330,41 @@ document.getElementById('globalBackBtn').onclick = () => {
     document.getElementById('dashboardHome').classList.remove('hidden');
 };
              
+import { orderBy, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Leaderboard load korar function
+async function loadLeaderboard() {
+    const lbDiv = document.getElementById('leaderboardList');
+    if(!lbDiv) return;
+
+    // Users collection theke top 5 coins wala student-der ano
+    const q = query(collection(db, "users"), orderBy("bpcoins", "desc"), limit(5));
+    
+    onSnapshot(q, (snapshot) => {
+        lbDiv.innerHTML = ""; // Clear list
+        
+        let rank = 1;
+        snapshot.forEach((userDoc) => {
+            const user = userDoc.data();
+            const row = document.createElement('div');
+            row.className = `p-4 flex justify-between items-center border-b border-slate-800/50 ${rank === 1 ? 'bg-yellow-500/10' : ''}`;
+            
+            row.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <span class="w-6 h-6 flex items-center justify-center rounded-full ${rank === 1 ? 'bg-yellow-500 text-black' : 'bg-slate-800 text-slate-400'} text-[10px] font-black">
+                        ${rank}
+                    </span>
+                    <div>
+                        <p class="text-sm font-bold text-slate-100">${user.name || 'Student'}</p>
+                        <p class="text-[9px] text-slate-500 uppercase">${user.city || 'Unknown'}</p>
+                    </div>
+                </div>
+                <div class="text-yellow-500 font-black text-sm">
+                    ${user.bpcoins || 0} <span class="text-[8px]">BP</span>
+                </div>
+            `;
+            lbDiv.appendChild(row);
+            rank++;
+        });
+    });
+                                                                         }
