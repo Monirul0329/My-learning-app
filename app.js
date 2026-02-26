@@ -90,6 +90,84 @@ const SYLLABUS = {
         }
     }
 };
+// --- SUBJECT & CHEMISTRY SPLIT LOGIC ---
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Core Subjects</h2>`;
+
+    const mainSubjects = ["Biology", "Physics", "Chemistry"];
+    
+    mainSubjects.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
+        div.innerHTML = `
+            <div>
+                <div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase tracking-tighter">NEET 2026</div>
+                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
+            </div>
+            <i class="fas fa-chevron-right text-slate-700"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") {
+                renderChemistryParts();
+            } else {
+                renderChapters(sub);
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderChemistryParts() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
+    
+    const parts = ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"];
+    parts.forEach(part => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700/50";
+        div.innerHTML = `<span class="font-bold text-slate-200 text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-600 text-xs"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderChemistryParts());
+            renderChapters("Chemistry", part);
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderChapters(sub, part = null) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
+    
+    // Chemistry hole SYLLABUS.Chemistry[part] theke anbe, onyo hole direct SYLLABUS[sub]
+    let chapters = [];
+    if (sub === "Chemistry" && part) {
+        chapters = Object.keys(SYLLABUS.Chemistry[part]);
+    } else {
+        chapters = Object.keys(SYLLABUS[sub]);
+    }
+    
+    chapters.forEach((ch, idx) => {
+        const isLocked = !userData.paid && idx !== 0; 
+        const div = document.createElement('div');
+        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40 grayscale' : 'cursor-pointer'}`;
+        div.innerHTML = `<span class="text-xs font-bold text-slate-300">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
+        
+        div.onclick = () => {
+            if (!isLocked) {
+                navHistory.push(() => renderChapters(sub, part));
+                renderTopics(sub, ch, part);
+            } else {
+                alert("Unlock Premium to Access all Chapters!");
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+
 
 function renderSubjects() {
     const grid = document.getElementById('mainGrid');
@@ -114,14 +192,44 @@ function renderSubjects() {
     });
 }
 
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Core Subjects</h2>`;
+
+    const mainSubjects = ["Biology", "Physics", "Chemistry"];
+    
+    mainSubjects.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
+        div.innerHTML = `
+            <div>
+                <div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase tracking-tighter">NEET 2026</div>
+                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
+            </div>
+            <i class="fas fa-chevron-right text-slate-700"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") {
+                renderChemistryParts();
+            } else {
+                renderChapters(sub);
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+
 function renderChemistryParts() {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase">Chemistry Categories</h2>`;
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
     
-    Object.keys(SYLLABUS.Chemistry).forEach(part => {
+    const parts = ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"];
+    parts.forEach(part => {
         const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/50 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
-        div.innerHTML = `<span class="font-bold text-slate-200">${part}</span><i class="fas fa-arrow-right text-xs"></i>`;
+        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700/50";
+        div.innerHTML = `<span class="font-bold text-slate-200 text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-600 text-xs"></i>`;
         
         div.onclick = () => {
             navHistory.push(() => renderChemistryParts());
@@ -133,20 +241,28 @@ function renderChemistryParts() {
 
 function renderChapters(sub, part = null) {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase">${part ? part : sub}</h2>`;
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
     
-    const chapterSource = part ? SYLLABUS[sub][part] : SYLLABUS[sub];
+    const chapters = part ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
     
-    Object.keys(chapterSource).forEach((ch, idx) => {
+    chapters.forEach((ch, idx) => {
+        const isLocked = !userData.paid && idx !== 0; 
         const div = document.createElement('div');
-        div.className = "p-4 bg-slate-800 rounded-xl mb-2 flex justify-between cursor-pointer border border-slate-700/50";
-        div.innerHTML = `<span>${ch}</span><i class="fas fa-play text-[10px] text-yellow-500"></i>`;
+        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40 grayscale' : 'cursor-pointer'}`;
+        div.innerHTML = `<span class="text-xs font-bold">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
+        
         div.onclick = () => {
-            navHistory.push(() => renderChapters(sub, part));
-            renderTopics(sub, ch, part);
+            if (!isLocked) {
+                navHistory.push(() => renderChapters(sub, part));
+                renderTopics(sub, ch, part);
+            } else {
+                alert("Unlock Premium to Access all Chapters!");
+            }
+        };
         grid.appendChild(div);
     });
 }
+
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -233,6 +349,22 @@ window.removeUser = async (uid) => {
 };
 
 function setupTeacherPanel() {
+    // Teacher panel logic ekti chotto update (upType switch)
+document.getElementById('uploadBtn').onclick = async () => {
+    const type = document.getElementById('upType').value; // video or pdf
+    const subject = document.getElementById('upSubject').value;
+    const chapter = document.getElementById('upChapter').value;
+    const link = document.getElementById('upLink').value;
+
+    if(!link) return alert("Link is required!");
+
+    await addDoc(collection(db, "materials"), {
+        type, subject, chapter, link,
+        createdAt: Date.now()
+    });
+    alert("Material Uploaded Successfully!");
+};
+
     const subSel = document.getElementById('upSubject');
     subSel.innerHTML = `<option value="">Select Subject</option>` + Object.keys(SYLLABUS).map(s => `<option value="${s}">${s}</option>`).join('');
 }
@@ -262,3 +394,100 @@ document.getElementById('authBtn').onclick = async () => {
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
 document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
         
+function renderNCERT() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px] tracking-widest">NCERT Textbooks (PDF)</h2>`;
+    
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer";
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fas fa-book-open text-blue-400"></i>
+                <span class="font-bold text-slate-200 text-xs uppercase">${sub} NCERT</span>
+            </div>
+            <i class="fas fa-download text-slate-600 text-xs"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderNCERT());
+            renderNCERTChapters(sub);
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderNCERTChapters(sub) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 uppercase text-[10px]">${sub} Chapters</h2>`;
+    
+    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
+    
+    getDocs(q).then(snap => {
+        if (snap.empty) {
+            grid.innerHTML += `<div class="p-10 text-center text-slate-600 text-xs">No NCERT PDFs uploaded yet by Teacher.</div>`;
+        }
+        snap.forEach(doc => {
+            const data = doc.data();
+            const div = document.createElement('div');
+            div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
+            div.innerHTML = `<span class="text-[10px] font-bold">${data.chapter}</span><a href="${data.link}" target="_blank" class="bg-blue-600 px-3 py-1 rounded text-[9px] font-bold">VIEW PDF</a>`;
+            grid.appendChild(div);
+        });
+    });
+}
+// NCERT Tab Handler (Change currentTab logic)
+window.changeTab = (tab) => {
+    const grid = document.getElementById('mainGrid');
+    navHistory = []; // Reset history when changing tabs
+    if (tab === 'ncert') {
+        renderNCERT();
+    } else {
+        renderSubjects();
+    }
+};
+
+function renderNCERT() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px] tracking-widest">NCERT Textbooks (PDF)</h2>`;
+    
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer active:scale-95 transition-all";
+        div.innerHTML = `
+            <div class="flex items-center gap-3">
+                <i class="fas fa-book-open text-blue-400"></i>
+                <span class="font-bold text-slate-200 text-xs uppercase">${sub} NCERT</span>
+            </div>
+            <i class="fas fa-download text-slate-600 text-xs"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderNCERT());
+            renderNCERTChapters(sub);
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderNCERTChapters(sub) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 uppercase text-[10px]">${sub} Chapters (PDF)</h2>`;
+    
+    // materials collection theke shudhu PDF type data anbe
+    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
+    
+    getDocs(q).then(snap => {
+        if (snap.empty) {
+            grid.innerHTML += `<div class="p-10 text-center text-slate-600 text-[10px]">No NCERT PDFs uploaded yet.</div>`;
+        }
+        snap.forEach(doc => {
+            const data = doc.data();
+            const div = document.createElement('div');
+            div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
+            div.innerHTML = `
+                <span class="text-[10px] font-bold text-slate-300">${data.chapter}</span>
+                <a href="${data.link}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase shadow-lg shadow-blue-900/20">Read PDF</a>
+            `;
+            grid.appendChild(div);
+        });
+    });
+    }
