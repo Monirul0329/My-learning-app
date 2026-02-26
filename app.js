@@ -244,4 +244,3 @@ signOut(auth).then(() => { location.reload(); }).catch((e) => { console.error(e)
 };
 document.getElementById('globalBackBtn').onclick = () => { if(navHistory.length > 0) (navHistory.pop())(); };
 document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
-    
