@@ -16,273 +16,92 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let userData = null;
+let navHistory = [];
 const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
 
 const SYLLABUS = {
     "Biology": {
-        "01. The Living World": ["1.1 What is Living?", "1.2 Diversity in Living World", "1.3 Taxonomic Categories"],
-        "02. Biological Classification": ["2.1 Kingdom Monera", "2.2 Kingdom Protista", "2.3 Fungi, Plantae, Animalia", "2.4 Viruses & Lichens"],
-        "03. Plant Kingdom": ["3.1 Algae", "3.2 Bryophytes", "3.3 Pteridophytes", "3.4 Gymnosperms & Angiosperms"],
-        "04. Animal Kingdom": ["4.1 Basis of Classification", "4.2 Non-Chordates", "4.3 Chordates"],
-        "05. Morphology of Flowering Plants": ["5.1 Root, Stem, Leaf", "5.2 Inflorescence", "5.3 Flower, Fruit, Seed"],
-        "06. Anatomy of Flowering Plants": ["6.1 Tissues", "6.2 Tissue System", "6.3 Dicot & Monocot Anatomy"],
-        "07. Structural Organisation in Animals": ["7.1 Animal Tissues", "7.2 Cockroach/Frog Study"],
-        "08. Cell: The Unit of Life": ["8.1 Prokaryotic Cell", "8.2 Eukaryotic Cell", "8.3 Cell Organelles"],
-        "09. Biomolecules": ["9.1 Carbohydrates & Proteins", "9.2 Nucleic Acids", "9.3 Enzymes"],
-        "10. Cell Cycle & Cell Division": ["10.1 Interphase", "10.2 Mitosis", "10.3 Meiosis"],
-        "11. Photosynthesis in Higher Plants": ["11.1 Light Reaction", "11.2 Dark Reaction (C3/C4)"],
-        "12. Respiration in Plants": ["12.1 Glycolysis", "12.2 Krebs Cycle", "12.3 ETS"],
-        "13. Plant Growth & Development": ["13.1 Growth Regulators (Auxin, Cytokinin)", "13.2 Photoperiodism"],
-        "14. Breathing & Exchange of Gases": ["14.1 Mechanism of Breathing", "14.2 Gas Transport"],
-        "15. Body Fluids & Circulation": ["15.1 Blood & Lymph", "15.2 Heart & Cardiac Cycle"],
-        "16. Excretory Products & Elimination": ["16.1 Nephron Structure", "16.2 Urine Formation"],
-        "17. Locomotion & Movement": ["17.1 Muscle Contraction", "17.2 Skeletal System"],
-        "18. Neural Control & Coordination": ["18.1 Nerve Impulse", "18.2 Reflex Action"],
-        "19. Chemical Coordination": ["19.1 Endocrine Glands", "19.2 Hormone Action"],
-        "20. Sexual Reproduction in Flowering Plants": ["20.1 Pollination", "20.2 Double Fertilization"],
-        "21. Human Reproduction": ["21.1 Male/Female System", "21.2 Gametogenesis", "21.3 Fertilization"],
-        "22. Reproductive Health": ["22.1 Birth Control", "22.2 Infertility & IVF"],
-        "23. Principles of Inheritance": ["23.1 Mendel’s Laws", "23.2 Sex Determination", "23.3 Genetic Disorders"],
-        "24. Molecular Basis of Inheritance": ["24.1 DNA & RNA", "24.2 Replication", "24.3 Transcription & Translation"],
-        "25. Evolution": ["25.1 Origin of Life", "25.2 Darwinism", "25.3 Human Evolution"],
-        "26. Human Health & Disease": ["26.1 Common Diseases", "26.2 Immunity", "26.3 AIDS & Cancer"],
-        "27. Microbes in Human Welfare": ["27.1 Household & Industrial Products", "27.2 Sewage Treatment"],
-        "28. Biotechnology: Principles": ["28.1 Recombinant DNA Technology", "28.2 Restriction Enzymes"],
-        "29. Biotechnology: Applications": ["29.1 Bt Cotton & Insulin", "29.2 Gene Therapy"],
-        "30. Organisms & Populations": ["30.1 Population Attributes", "30.2 Interactions"],
-        "31. Ecosystem": ["31.1 Productivity & Decomposition", "31.2 Energy Flow"],
-        "32. Biodiversity & Conservation": ["32.1 Patterns of Biodiversity", "32.2 In-situ & Ex-situ Conservation"]
+        "01. The Living World": ["1.1 What is Living?", "1.2 Diversity", "1.3 Taxonomy"],
+        "02. Biological Classification": ["2.1 Monera", "2.2 Protista", "2.3 Fungi"],
+        "03. Plant Kingdom": ["3.1 Algae", "3.2 Bryophytes", "3.3 Pteridophytes"],
+        "04. Animal Kingdom": ["4.1 Classification", "4.2 Non-Chordates"],
+        "05. Morphology": ["5.1 Root", "5.2 Stem", "5.3 Leaf"],
+        "06. Anatomy": ["6.1 Tissues", "6.2 Tissue System"],
+        "07. Structural Organisation": ["7.1 Animal Tissues"],
+        "08. Cell: Unit of Life": ["8.1 Prokaryotic", "8.2 Eukaryotic"],
+        "09. Biomolecules": ["9.1 Proteins", "9.2 Enzymes"],
+        "10. Cell Cycle": ["10.1 Mitosis", "10.2 Meiosis"],
+        "11. Photosynthesis": ["11.1 Light Reaction", "11.2 Dark Reaction"],
+        "12. Respiration": ["12.1 Glycolysis", "12.2 Krebs Cycle"],
+        "13. Plant Growth": ["13.1 Regulators"],
+        "14. Breathing": ["14.1 Mechanism"],
+        "15. Body Fluids": ["15.1 Blood", "15.2 Heart"],
+        "16. Excretion": ["16.1 Nephron"],
+        "17. Locomotion": ["17.1 Muscle", "17.2 Skeleton"],
+        "18. Neural Control": ["18.1 Nerve Impulse"],
+        "19. Chemical Coordination": ["19.1 Hormones"],
+        "20. Sexual Reproduction": ["20.1 Pollination"],
+        "21. Human Reproduction": ["21.1 Gametogenesis"],
+        "22. Reproductive Health": ["22.1 Birth Control"],
+        "23. Inheritance": ["23.1 Mendel's Laws"],
+        "24. Molecular Basis": ["24.1 DNA Replication"],
+        "25. Evolution": ["25.1 Darwinism"],
+        "26. Health & Disease": ["26.1 Immunity", "26.2 AIDS"],
+        "27. Microbes": ["27.1 Sewage Treatment"],
+        "28. Bio Principles": ["28.1 Recombinant DNA"],
+        "29. Bio Applications": ["29.1 Insulin"],
+        "30. Organisms": ["30.1 Populations"],
+        "31. Ecosystem": ["31.1 Energy Flow"],
+        "32. Biodiversity": ["32.1 Conservation"]
     },
     "Physics": {
-        "01. Units & Measurements": ["1.1 SI Units", "1.2 Error Analysis", "1.3 Dimensions"],
-        "02. Motion in a Straight Line": ["2.1 Kinematics Graphs", "2.2 Relative Velocity"],
-        "03. Motion in a Plane": ["3.1 Vector Addition", "3.2 Projectile Motion"],
-        "04. Laws of Motion": ["4.1 Newton’s Laws", "4.2 Friction", "4.3 Circular Motion"],
-        "05. Work, Energy & Power": ["5.1 Work-Energy Theorem", "5.2 Collisions"],
-        "06. System of Particles": ["6.1 Center of Mass", "6.2 Torque & Angular Momentum"],
-        "07. Gravitation": ["7.1 Kepler’s Laws", "7.2 Gravitational Potential"],
-        "08. Thermodynamics": ["8.1 Laws of Thermodynamics", "8.2 Heat Engines"],
-        "09. Electrostatics": ["9.1 Coulomb’s Law", "9.2 Gauss Theorem"],
-        "10. Ray Optics": ["10.1 Reflection & Refraction", "10.2 Optical Instruments"]
+        "01. Units": ["1.1 SI Units"],
+        "02. Straight Line": ["2.1 Kinematics"],
+        "03. Motion Plane": ["3.1 Vectors"],
+        "04. Laws of Motion": ["4.1 Friction"],
+        "05. Work Energy": ["5.1 Power"],
+        "06. System Particles": ["6.1 Rotation"],
+        "07. Gravitation": ["7.1 Kepler's Laws"],
+        "08. Thermodynamics": ["8.1 Heat Engines"],
+        "09. Electrostatics": ["9.1 Gauss Law"],
+        "10. Ray Optics": ["10.1 Reflection"]
     },
     "Chemistry": {
         "Physical Chemistry": {
-        "01. Basic Concepts": ["1.1 Mole Concept", "1.2 Stoichiometry"],
-        "02. Structure of Atom": ["2.1 Bohr’s Model", "2.2 Quantum Numbers"],
-        "03. Chemical Thermodynamics": ["3.1 Enthalpy", "3.2 Entropy & Gibbs Free Energy"],
-        "04. Equilibrium": ["4.1 Ionic Equilibrium", "4.2 pH Scale"],
-        "05. Chemical Kinetics": ["5.1 Rate Laws", "5.2 Activation Energy"]
-    },
-    "Inorganic Chemistry": {
-            "01. Periodic Classification": ["1.1 Periodic Trends", "1.2 Ionization Enthalpy"],
-        "02. Chemical Bonding": ["2.1 VSEPR Theory", "2.2 Hybridization"],
-        "03. p-Block Elements": ["3.1 Group 13 to 18"],
-        "04. d & f Block Elements": ["4.1 Transition Elements", "4.2 Lanthanoids"],
-        "05. Coordination Compounds": ["5.1 IUPAC Naming", "5.2 Crystal Field Theory"]
-    },
-    "Organic Chemistry": {
-        "01. General Organic Chemistry": ["1.1 Isomerism", "1.2 Electronic Effects (Inductive, Resonance)"],
-        "02. Hydrocarbons": ["2.1 Alkanes, Alkenes, Alkynes"],
-        "03. Haloalkanes & Haloarenes": ["3.1 SN1 & SN2 Reactions"],
-        "04. Alcohol, Phenol & Ether": ["4.1 Chemical Properties", "4.2 Identification Tests"],
-        "05. Aldehydes & Ketones": ["5.1 Nucleophilic Addition", "5.2 Name Reactions"],
-        "06. Amines": ["6.1 Basicity of Amines"]
+            "01. Basic Concepts": ["1.1 Mole Concept"],
+            "02. Structure of Atom": ["2.1 Quantum Numbers"],
+            "03. Thermodynamics": ["3.1 Enthalpy"],
+            "04. Equilibrium": ["4.1 Ionic"],
+            "05. Kinetics": ["5.1 Rate Laws"]
+        },
+        "Inorganic Chemistry": {
+            "01. Periodicity": ["1.1 Trends"],
+            "02. Chemical Bonding": ["2.1 VSEPR"],
+            "03. p-Block": ["3.1 Group 13-18"],
+            "04. d-f Block": ["4.1 Lanthanoids"],
+            "05. Coordination": ["5.1 IUPAC"]
+        },
+        "Organic Chemistry": {
+            "01. GOC": ["1.1 Isomerism"],
+            "02. Hydrocarbons": ["2.1 Alkanes"],
+            "03. Haloalkanes": ["3.1 SN1/SN2"],
+            "04. Alcohols": ["4.1 Phenols"],
+            "05. Aldehydes": ["5.1 Name Reactions"],
+            "06. Amines": ["6.1 Basicity"]
         }
     }
 };
-// --- SUBJECT & CHEMISTRY SPLIT LOGIC ---
-function renderSubjects() {
-    const grid = document.getElementById('mainGrid');
-    if (!grid) return;
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Core Subjects</h2>`;
-
-    const mainSubjects = ["Biology", "Physics", "Chemistry"];
-    
-    mainSubjects.forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
-        div.innerHTML = `
-            <div>
-                <div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase tracking-tighter">NEET 2026</div>
-                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
-            </div>
-            <i class="fas fa-chevron-right text-slate-700"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderSubjects());
-            if (sub === "Chemistry") {
-                renderChemistryParts();
-            } else {
-                renderChapters(sub);
-            }
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderChemistryParts() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
-    
-    const parts = ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"];
-    parts.forEach(part => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700/50";
-        div.innerHTML = `<span class="font-bold text-slate-200 text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-600 text-xs"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderChemistryParts());
-            renderChapters("Chemistry", part);
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderChapters(sub, part = null) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
-    
-    // Chemistry hole SYLLABUS.Chemistry[part] theke anbe, onyo hole direct SYLLABUS[sub]
-    let chapters = [];
-    if (sub === "Chemistry" && part) {
-        chapters = Object.keys(SYLLABUS.Chemistry[part]);
-    } else {
-        chapters = Object.keys(SYLLABUS[sub]);
-    }
-    
-    chapters.forEach((ch, idx) => {
-        const isLocked = !userData.paid && idx !== 0; 
-        const div = document.createElement('div');
-        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40 grayscale' : 'cursor-pointer'}`;
-        div.innerHTML = `<span class="text-xs font-bold text-slate-300">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
-        
-        div.onclick = () => {
-            if (!isLocked) {
-                navHistory.push(() => renderChapters(sub, part));
-                renderTopics(sub, ch, part);
-            } else {
-                alert("Unlock Premium to Access all Chapters!");
-            }
-        };
-        grid.appendChild(div);
-    });
-}
-
-
-function renderSubjects() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
-
-    const mainSubjects = ["Biology", "Physics", "Chemistry"];
-    
-    mainSubjects.forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3";
-        div.innerHTML = `<div><div class="font-black text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderSubjects());
-            if (sub === "Chemistry") {
-                renderChemistryParts();
-            } else {
-                renderChapters(sub);
-            }
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderSubjects() {
-    const grid = document.getElementById('mainGrid');
-    if (!grid) return;
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Core Subjects</h2>`;
-
-    const mainSubjects = ["Biology", "Physics", "Chemistry"];
-    
-    mainSubjects.forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
-        div.innerHTML = `
-            <div>
-                <div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase tracking-tighter">NEET 2026</div>
-                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
-            </div>
-            <i class="fas fa-chevron-right text-slate-700"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderSubjects());
-            if (sub === "Chemistry") {
-                renderChemistryParts();
-            } else {
-                renderChapters(sub);
-            }
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderChemistryParts() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
-    
-    const parts = ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"];
-    parts.forEach(part => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700/50";
-        div.innerHTML = `<span class="font-bold text-slate-200 text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-600 text-xs"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderChemistryParts());
-            renderChapters("Chemistry", part);
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderChapters(sub, part = null) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
-    
-    const chapters = part ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
-    
-    chapters.forEach((ch, idx) => {
-        const isLocked = !userData.paid && idx !== 0; 
-        const div = document.createElement('div');
-        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40 grayscale' : 'cursor-pointer'}`;
-        div.innerHTML = `<span class="text-xs font-bold">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
-        
-        div.onclick = () => {
-            if (!isLocked) {
-                navHistory.push(() => renderChapters(sub, part));
-                renderTopics(sub, ch, part);
-            } else {
-                alert("Unlock Premium to Access all Chapters!");
-            }
-        };
-        grid.appendChild(div);
-    });
-}
-
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             if (snap.exists()) {
                 userData = snap.data();
-                
-                if (userData.blocked) {
-                    alert("Your account is BLOCKED.");
-                    signOut(auth);
-                    return;
-                }
-
+                if (userData.blocked) { alert("BLOCKED!"); signOut(auth); return; }
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                
                 showPanel(userData.role);
-            } else {
-                console.log("No Firestore data found for this user.");
             }
         });
     } else {
@@ -292,202 +111,152 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
+window.changeTab = (tab) => {
+    navHistory = [];
+    if (tab === 'ncert') renderNCERT();
+    else renderSubjects();
+};
+
 function renderSubjects() {
     const grid = document.getElementById('mainGrid');
     if (!grid) return;
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
-
-    Object.keys(SYLLABUS).forEach(sub => {
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Core Subjects</h2>`;
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
         const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
-        div.innerHTML = `<div><div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase">NEET Master 2026</div><div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
-        div.onclick = () => renderChapters(sub);
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all";
+        div.innerHTML = `<div><div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") renderChemistryParts();
+            else renderChapters(sub);
+        };
         grid.appendChild(div);
     });
 }
+
+function renderChemistryParts() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
+    Object.keys(SYLLABUS.Chemistry).forEach(part => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
+        div.innerHTML = `<span class="font-bold text-slate-200 text-xs italic uppercase">${part}</span><i class="fas fa-flask text-xs"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderChemistryParts());
+            renderChapters("Chemistry", part);
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderChapters(sub, part = null) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part || sub}</h2>`;
+    const chapters = part ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
+    chapters.forEach((ch, i) => {
+        const isLocked = !userData.paid && i !== 0;
+        const div = document.createElement('div');
+        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40' : 'cursor-pointer'}`;
+        div.innerHTML = `<span class="text-xs font-bold text-slate-300">${ch}</span><i class="fas ${isLocked ? 'fa-lock' : 'fa-play-circle'} text-yellow-600"></i>`;
+        div.onclick = () => {
+            if (!isLocked) {
+                navHistory.push(() => renderChapters(sub, part));
+                renderTopics(sub, ch, part);
+            } else alert("Unlock Premium!");
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderTopics(sub, ch, part = null) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-xs font-bold mb-4 text-slate-500 italic">${ch}</h2>`;
+    const topics = part ? SYLLABUS.Chemistry[part][ch] : SYLLABUS[sub][ch];
+    topics.forEach(t => {
+        const div = document.createElement('div');
+        div.className = "p-4 bg-slate-950 rounded-xl mb-2 border border-slate-900 flex justify-between items-center";
+        div.innerHTML = `<span class="text-xs">${t}</span><button class="bg-yellow-600 text-black px-3 py-1 rounded-lg text-[10px] font-bold">START</button>`;
+        grid.appendChild(div);
+    });
+}
+
+function renderNCERT() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px]">NCERT PDF Library</h2>`;
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer";
+        div.innerHTML = `<span class="font-bold text-slate-200 text-xs uppercase">${sub} NCERT</span><i class="fas fa-file-pdf text-blue-400"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderNCERT());
+            renderNCERTPDFs(sub);
+        };
+        grid.appendChild(div);
+    });
+}
+
+async function renderNCERTPDFs(sub) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 text-[10px] uppercase">${sub} NCERT Chapters</h2>`;
+    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
+    const snap = await getDocs(q);
+    if (snap.empty) grid.innerHTML += `<p class="text-[10px] text-slate-600">No PDFs found.</p>`;
+    snap.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement('div');
+        div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
+        div.innerHTML = `<span class="text-[10px] text-slate-300">${data.chapter}</span><a href="${data.link}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded text-[9px] font-bold uppercase">Open</a>`;
+        grid.appendChild(div);
+    });
+}
+
+
 
 function showPanel(role) {
     document.getElementById('studentPanel').classList.toggle('hidden', role !== 'student');
     document.getElementById('teacherPanel').classList.toggle('hidden', role !== 'teacher');
     document.getElementById('adminPanel').classList.toggle('hidden', role !== 'admin');
-
     if (role === 'student') renderSubjects();
     if (role === 'admin') loadAdminUsers();
     if (role === 'teacher') setupTeacherPanel();
-    
-    const coins = userData.bpcoins || 0;
-    document.getElementById('coins').innerText = coins;
-    const lvlIdx = Math.min(Math.floor(coins / 1000), 9);
-    document.getElementById('userLevelDisplay').innerText = "Rank: " + LEVELS[lvlIdx];
+    document.getElementById('coins').innerText = userData.bpcoins || 0;
 }
-
-function loadAdminUsers() {
-    const container = document.getElementById('adminUserList');
-    onSnapshot(collection(db, "users"), (snap) => {
-        container.innerHTML = `<h3 class="text-xs font-bold text-slate-500 mb-4 uppercase">User Management (${snap.size})</h3>`;
-        snap.forEach(uDoc => {
-            const u = uDoc.data();
-            if (u.role === 'admin') return;
-            const card = document.createElement('div');
-            card.className = "p-4 bg-slate-900 rounded-2xl border border-slate-800 flex justify-between items-center mb-3";
-            card.innerHTML = `<div><div class="font-bold text-sm">${u.name}</div><div class="text-[9px] text-yellow-500">${u.paid ? 'PAID' : 'FREE'}</div></div>
-                <div class="flex gap-2">
-                    <button onclick="updateUserStatus('${uDoc.id}', 'paid', ${!u.paid})" class="p-2 bg-slate-800 rounded text-[10px]">STATUS</button>
-                    <button onclick="removeUser('${uDoc.id}')" class="p-2 bg-red-900/20 text-red-500 rounded text-[10px]"><i class="fas fa-trash"></i></button>
-                </div>`;
-            container.appendChild(card);
-        });
-    });
-}
-
-window.updateUserStatus = async (uid, field, value) => {
-    await updateDoc(doc(db, "users", uid), { [field]: value });
-};
-
-window.removeUser = async (uid) => {
-    if(confirm("Delete user?")) await deleteDoc(doc(db, "users", uid));
-};
 
 function setupTeacherPanel() {
-    // Teacher panel logic ekti chotto update (upType switch)
-document.getElementById('uploadBtn').onclick = async () => {
-    const type = document.getElementById('upType').value; // video or pdf
-    const subject = document.getElementById('upSubject').value;
-    const chapter = document.getElementById('upChapter').value;
-    const link = document.getElementById('upLink').value;
-
-    if(!link) return alert("Link is required!");
-
-    await addDoc(collection(db, "materials"), {
-        type, subject, chapter, link,
-        createdAt: Date.now()
-    });
-    alert("Material Uploaded Successfully!");
-};
-
     const subSel = document.getElementById('upSubject');
     subSel.innerHTML = `<option value="">Select Subject</option>` + Object.keys(SYLLABUS).map(s => `<option value="${s}">${s}</option>`).join('');
 }
+
+document.getElementById('uploadBtn').onclick = async () => {
+    const data = {
+        type: document.getElementById('upType').value,
+        subject: document.getElementById('upSubject').value,
+        chapter: document.getElementById('upChapter').value,
+        link: document.getElementById('upLink').value,
+        createdAt: Date.now()
+    };
+    if(!data.link || !data.subject) return alert("Fill all fields!");
+    await addDoc(collection(db, "materials"), data);
+    alert("Uploaded!");
+};
 
 document.getElementById('authBtn').onclick = async () => {
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('pass').value.trim();
     const isSignup = !document.getElementById('signupFields').classList.contains('hidden');
-
     try {
         if (isSignup) {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
                 name: document.getElementById('regName').value,
-                email: email,
-                role: document.getElementById('regRole').value,
+                email: email, role: document.getElementById('regRole').value,
                 paid: false, blocked: false, bpcoins: 0
             });
-        } else {
-            await signInWithEmailAndPassword(auth, email, pass);
-        }
-    } catch (e) {
-        document.getElementById('authMsg').innerText = e.message;
-    }
+        } else await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) { document.getElementById('authMsg').innerText = e.message; }
 };
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
+document.getElementById('globalBackBtn').onclick = () => { if(navHistory.length > 0) (navHistory.pop())(); };
 document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
-        
-function renderNCERT() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px] tracking-widest">NCERT Textbooks (PDF)</h2>`;
-    
-    ["Biology", "Physics", "Chemistry"].forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer";
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <i class="fas fa-book-open text-blue-400"></i>
-                <span class="font-bold text-slate-200 text-xs uppercase">${sub} NCERT</span>
-            </div>
-            <i class="fas fa-download text-slate-600 text-xs"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderNCERT());
-            renderNCERTChapters(sub);
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderNCERTChapters(sub) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 uppercase text-[10px]">${sub} Chapters</h2>`;
-    
-    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
-    
-    getDocs(q).then(snap => {
-        if (snap.empty) {
-            grid.innerHTML += `<div class="p-10 text-center text-slate-600 text-xs">No NCERT PDFs uploaded yet by Teacher.</div>`;
-        }
-        snap.forEach(doc => {
-            const data = doc.data();
-            const div = document.createElement('div');
-            div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
-            div.innerHTML = `<span class="text-[10px] font-bold">${data.chapter}</span><a href="${data.link}" target="_blank" class="bg-blue-600 px-3 py-1 rounded text-[9px] font-bold">VIEW PDF</a>`;
-            grid.appendChild(div);
-        });
-    });
-}
-// NCERT Tab Handler (Change currentTab logic)
-window.changeTab = (tab) => {
-    const grid = document.getElementById('mainGrid');
-    navHistory = []; // Reset history when changing tabs
-    if (tab === 'ncert') {
-        renderNCERT();
-    } else {
-        renderSubjects();
-    }
-};
-
-function renderNCERT() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px] tracking-widest">NCERT Textbooks (PDF)</h2>`;
-    
-    ["Biology", "Physics", "Chemistry"].forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer active:scale-95 transition-all";
-        div.innerHTML = `
-            <div class="flex items-center gap-3">
-                <i class="fas fa-book-open text-blue-400"></i>
-                <span class="font-bold text-slate-200 text-xs uppercase">${sub} NCERT</span>
-            </div>
-            <i class="fas fa-download text-slate-600 text-xs"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderNCERT());
-            renderNCERTChapters(sub);
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderNCERTChapters(sub) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 uppercase text-[10px]">${sub} Chapters (PDF)</h2>`;
-    
-    // materials collection theke shudhu PDF type data anbe
-    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
-    
-    getDocs(q).then(snap => {
-        if (snap.empty) {
-            grid.innerHTML += `<div class="p-10 text-center text-slate-600 text-[10px]">No NCERT PDFs uploaded yet.</div>`;
-        }
-        snap.forEach(doc => {
-            const data = doc.data();
-            const div = document.createElement('div');
-            div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
-            div.innerHTML = `
-                <span class="text-[10px] font-bold text-slate-300">${data.chapter}</span>
-                <a href="${data.link}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[9px] font-black uppercase shadow-lg shadow-blue-900/20">Read PDF</a>
-            `;
-            grid.appendChild(div);
-        });
-    });
-    }
+            
