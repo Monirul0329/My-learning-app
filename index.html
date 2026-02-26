@@ -3,83 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>mNeet 2026 Pro</title>
+    <title>mNeet Pro 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --accent: #eab308; --bg: #020617; }
-        body { background-color: var(--bg); font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
-        .glass { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        body { background-color: var(--bg); font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .nav-tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1.5rem; border: 2px solid #1e293b; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .locked-card { filter: grayscale(1); opacity: 0.6; pointer-events: none; position: relative; }
+        .locked-card::after { content: "\f023"; font-family: "Font Awesome 5 Free"; font-weight: 900; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; color: #fbbf24; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="text-slate-200">
 
-    <header id="mainHeader" class="hidden fixed top-0 w-full glass p-4 z-50 flex justify-between items-center px-6">
-        <button id="globalBackBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-800 border border-yellow-500/50">
-            <i class="fas fa-chevron-left text-yellow-500 text-lg"></i>
+    <header id="mainHeader" class="hidden fixed top-0 w-full glass p-4 z-50 flex justify-between items-center">
+        <button id="globalBackBtn" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-yellow-500/30">
+            <i class="fas fa-arrow-left text-yellow-500"></i>
         </button>
         <div class="text-center">
-            <div class="font-black text-xl italic text-yellow-500 tracking-tighter">mNeet 2026</div>
-            <div id="userLevelDisplay" class="text-[9px] font-bold uppercase text-slate-400">Level: Loading...</div>
+            <div class="font-black text-lg italic text-yellow-500">mNeet 2026</div>
+            <div id="roleLabel" class="text-[8px] uppercase tracking-tighter text-slate-500">Initializing...</div>
         </div>
-        <div class="flex items-center gap-3">
-            <div class="bg-yellow-500 text-black px-3 py-1 rounded-lg font-black text-[10px] shadow-lg">
-                <span id="coins">0</span> BP
-            </div>
-            <button id="logoutBtn" class="text-slate-500 hover:text-red-500"><i class="fas fa-power-off"></i></button>
+        <div id="statusIcon" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
+            <i class="fas fa-user-circle text-slate-400"></i>
         </div>
     </header>
 
     <div id="authPage" class="min-h-screen flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
-            <h1 class="text-4xl font-black text-yellow-500 mb-2 italic text-center">mNeet</h1>
-            <div id="signupFields" class="hidden space-y-3 mb-4">
+        <div class="w-full max-w-md bg-slate-900/80 p-8 rounded-[3rem] border border-slate-800">
+            <h1 class="text-4xl font-black text-yellow-500 text-center mb-8 italic">mNeet</h1>
+            <div id="signupGroup" class="hidden space-y-3 mb-4">
                 <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
-                <input type="text" id="regCity" placeholder="Your City" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
+                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
                 <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none text-xs text-slate-400">
-                    <option value="student">Student Account</option>
-                    <option value="teacher">Teacher Account</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
                 </select>
             </div>
             <div class="space-y-3">
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
+                <input type="email" id="email" placeholder="Email" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
                 <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
-                <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black">Continue</button>
-                <button id="forgotBtn" class="w-full text-[10px] text-slate-500 font-bold uppercase mt-2">Forgot Password?</button>
+                <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black">Sign In</button>
+                <button id="toggleAuth" class="w-full text-[10px] text-yellow-500 font-bold uppercase mt-4">Create New Account</button>
             </div>
-            <div class="flex justify-center mt-6">
-                <button id="toggleAuth" class="text-[10px] font-bold text-yellow-500 uppercase underline">New Access</button>
-            </div>
-            <p id="authMsg" class="mt-4 text-center text-red-500 text-[10px] font-bold"></p>
         </div>
     </div>
 
-    <main id="appContent" class="hidden pt-28 p-4 max-w-2xl mx-auto pb-32">
-        <div class="flex gap-4 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar scroll-smooth">
-            <button id="tabHome" class="nav-tab active pb-3 font-black text-[10px] uppercase whitespace-nowrap px-2">Home/Store</button>
-            <button id="tabPrime" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Prime Lectures</button>
-            <button id="tabPractice" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Practice Zone</button>
-            <button id="tabNcert" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">NCERT & PYQ</button>
-            <button id="tabRank" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Rank</button>
-            <button id="tabAdmin" class="hidden nav-tab pb-3 text-red-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Admin</button>
-        </div>
+    <main id="appContent" class="hidden pt-24 p-4 max-w-3xl mx-auto pb-32">
+        <div id="navBar" class="flex gap-4 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar pb-2">
+            </div>
         <div id="viewContainer" class="space-y-6"></div>
     </main>
 
-    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/98 flex flex-col items-center p-4">
-        <button id="closeVideo" class="absolute top-6 right-6 text-white text-4xl">&times;</button>
-        <div id="playerBox" class="w-full max-w-4xl video-container mt-12 mb-4"></div>
-        <div class="w-full max-w-4xl bg-slate-900 rounded-3xl p-4 flex flex-col h-[300px]">
-            <div id="chatBox" class="flex-1 overflow-y-auto space-y-2 mb-4 no-scrollbar p-2"></div>
-            <div class="flex gap-2">
-                <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs outline-none focus:border-yellow-600">
-                <button id="sendChat" class="bg-yellow-600 text-black px-4 rounded-xl"><i class="fas fa-paper-plane"></i></button>
-            </div>
+    <div id="playerModal" class="hidden fixed inset-0 z-[100] bg-black/95 flex flex-col p-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modalTitle" class="text-yellow-500 font-black text-xs uppercase italic">Player</h3>
+            <button id="closeModal" class="text-white text-3xl">&times;</button>
         </div>
+        <div id="modalBody" class="flex-1 overflow-y-auto no-scrollbar"></div>
     </div>
 
     <script type="module" src="app.js"></script>
