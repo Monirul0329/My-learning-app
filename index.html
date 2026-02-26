@@ -14,7 +14,6 @@
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1.5rem; border: 2px solid #1e293b; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .course-card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="text-slate-200">
@@ -47,10 +46,10 @@
                 </select>
             </div>
             <div class="space-y-3">
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-600">
-                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-600">
+                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
+                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
                 <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black">Continue</button>
-                <button id="forgotBtn" class="w-full text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2 hover:text-yellow-500">Forgot Password?</button>
+                <button id="forgotBtn" class="w-full text-[10px] text-slate-500 font-bold uppercase mt-2">Forgot Password?</button>
             </div>
             <div class="flex justify-center mt-6"><button id="toggleAuth" class="text-[10px] font-bold text-yellow-500 uppercase underline">New Access</button></div>
             <p id="authMsg" class="mt-4 text-center text-red-500 text-[10px] font-bold"></p>
@@ -58,7 +57,6 @@
     </div>
 
     <main id="appContent" class="hidden pt-28 p-4 max-w-2xl mx-auto pb-32">
-        
         <div class="flex gap-4 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar scroll-smooth">
             <button id="tabHome" class="nav-tab active pb-3 font-black text-[10px] uppercase whitespace-nowrap px-2">Home/Store</button>
             <button id="tabPrime" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Prime Lectures</button>
@@ -67,24 +65,22 @@
             <button id="tabRank" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Rank</button>
             <button id="tabAdmin" class="hidden nav-tab pb-3 text-red-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Admin</button>
         </div>
-
         <div id="viewContainer" class="space-y-6"></div>
     </main>
 
-    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/98 flex flex-col items-center p-4 overflow-y-auto">
+    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/98 flex flex-col items-center p-4">
         <button id="closeVideo" class="absolute top-6 right-6 text-white text-4xl">&times;</button>
         <div id="playerBox" class="w-full max-w-4xl video-container mt-12 mb-4"></div>
         <div class="w-full max-w-4xl bg-slate-900 rounded-3xl p-4 flex flex-col h-[300px]">
-            <div class="text-yellow-500 font-black text-[10px] uppercase mb-2 italic">Live Discussion</div>
             <div id="chatBox" class="flex-1 overflow-y-auto space-y-2 mb-4 no-scrollbar p-2"></div>
             <div class="flex gap-2">
                 <input type="text" id="chatInput" placeholder="Ask a doubt..." class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs outline-none focus:border-yellow-600">
-                <button id="sendChat" class="bg-yellow-600 text-black px-4 rounded-xl font-bold"><i class="fas fa-paper-plane"></i></button>
+                <button id="sendChat" class="bg-yellow-600 text-black px-4 rounded-xl"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
     <script type="module" src="app.js"></script>
 </body>
-                    </html>
-    
+</html>
+
