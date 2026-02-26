@@ -17,6 +17,7 @@ const db = getFirestore(app);
 
 let userData = null;
 let navHistory = [];
+let rewardInterval = null;
 const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
 
 const SYLLABUS = {
@@ -87,7 +88,6 @@ onAuthStateChanged(auth, (user) => {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             if (snap.exists()) {
                 userData = snap.data();
-                if (userData.blocked) { alert("BLOCKED!"); signOut(auth); return; }
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
@@ -105,8 +105,8 @@ onAuthStateChanged(auth, (user) => {
 function updateUI() {
     const coins = userData.bpcoins || 0;
     document.getElementById('coins').innerText = coins;
-    const levelIndex = Math.min(Math.floor(coins / 500), LEVELS.length - 1);
-    document.getElementById('userLevelDisplay').innerText = `Level: ${LEVELS[levelIndex]}`;
+    const lv = Math.min(Math.floor(coins / 500), LEVELS.length - 1);
+    document.getElementById('userLevelDisplay').innerText = `Level: ${LEVELS[lv]}`;
 }
 
 function showPanel(role) {
@@ -118,12 +118,11 @@ function showPanel(role) {
 
 function renderSubjects() {
     const grid = document.getElementById('mainGrid');
-    if (!grid) return;
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest italic">Choose Your Subject</h2>`;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-black uppercase mb-4 italic">Core Subjects</h2>`;
     ["Biology", "Physics", "Chemistry"].forEach(sub => {
         const div = document.createElement('div');
         div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all";
-        div.innerHTML = `<div><div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        div.innerHTML = `<div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div><i class="fas fa-chevron-right text-slate-700"></i>`;
         div.onclick = () => {
             navHistory.push(() => renderSubjects());
             if (sub === "Chemistry") renderChemistryParts();
@@ -135,31 +134,25 @@ function renderSubjects() {
 
 function renderChemistryParts() {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
-    ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"].forEach(part => {
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Categories</h2>`;
+    ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"].forEach(p => {
         const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700 active:scale-95";
-        div.innerHTML = `<span class="font-bold text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-500"></i>`;
-        div.onclick = () => {
-            navHistory.push(() => renderChemistryParts());
-            renderChapters("Chemistry", part); 
-        };
+        div.className = "p-5 bg-slate-800 rounded-2xl mb-3 flex justify-between items-center border border-slate-700";
+        div.innerHTML = `<span class="font-bold text-xs uppercase italic">${p}</span><i class="fas fa-flask text-slate-500"></i>`;
+        div.onclick = () => { navHistory.push(() => renderChemistryParts()); renderChapters("Chemistry", p); };
         grid.appendChild(div);
     });
 }
 
 function renderChapters(sub, part = null) {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
-    const chapters = (sub === "Chemistry" && part) ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
-    chapters.forEach((ch) => {
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part || sub}</h2>`;
+    const chs = (sub === "Chemistry" && part) ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
+    chs.forEach(ch => {
         const div = document.createElement('div');
         div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 cursor-pointer";
         div.innerHTML = `<span class="text-xs font-bold text-slate-300 italic">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
-        div.onclick = () => {
-            navHistory.push(() => renderChapters(sub, part));
-            renderTopics(sub, ch, part);
-        };
+        div.onclick = () => { navHistory.push(() => renderChapters(sub, part)); renderTopics(sub, ch, part); };
         grid.appendChild(div);
     });
 }
@@ -167,89 +160,93 @@ function renderChapters(sub, part = null) {
 function renderTopics(sub, ch, part = null) {
     const grid = document.getElementById('mainGrid');
     grid.innerHTML = `<h2 class="text-xs font-bold mb-4 text-slate-500 italic">${ch}</h2>`;
-    const topics = (sub === "Chemistry" && part) ? SYLLABUS.Chemistry[part][ch] : SYLLABUS[sub][ch];
-    topics.forEach(t => {
+    const ts = (sub === "Chemistry" && part) ? SYLLABUS.Chemistry[part][ch] : SYLLABUS[sub][ch];
+    ts.forEach(t => {
         const div = document.createElement('div');
         div.className = "p-4 bg-slate-950 rounded-xl mb-2 border border-slate-900 flex justify-between items-center";
-        div.innerHTML = `<span class="text-xs text-slate-300 font-medium">${t}</span><button class="bg-yellow-600 text-black px-4 py-1.5 rounded-lg text-[10px] font-black uppercase shadow-lg shadow-yellow-600/10 active:scale-90 transition-all">Start</button>`;
-        div.querySelector('button').onclick = async () => {
-            const newCoins = (userData.bpcoins || 0) + 10;
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { bpcoins: newCoins });
-            alert("Goal Started! +10 BP Coins");
-        };
+        div.innerHTML = `<span class="text-xs text-slate-300">${t}</span><button class="bg-yellow-600 text-black px-4 py-1.5 rounded-lg text-[10px] font-black">START</button>`;
+        div.querySelector('button').onclick = () => fetchLectures(t);
         grid.appendChild(div);
     });
 }
+
+async function fetchLectures(topic) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 text-[10px] uppercase">Available Lectures</h2>`;
+    const q = query(collection(db, "materials"), where("type", "==", "video"), where("chapter", "==", topic));
+    const snap = await getDocs(q);
+    if(snap.empty) grid.innerHTML += `<p class="text-[10px] text-slate-700">No lectures uploaded for this topic.</p>`;
+    snap.forEach(d => {
+        const data = d.data();
+        const div = document.createElement('div');
+        div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
+        div.innerHTML = `<span class="text-[11px] font-bold text-slate-200 uppercase">${data.chapter}</span><button class="bg-yellow-600 text-black px-4 py-1.5 rounded-lg text-[10px] font-black uppercase">Watch</button>`;
+        div.querySelector('button').onclick = () => openVideo(data.link, data.chapter);
+        grid.appendChild(div);
+    });
+}
+
+function openVideo(link, title) {
+    const modal = document.getElementById('videoModal');
+    const player = document.getElementById('playerBox');
+    modal.classList.remove('hidden');
+    document.getElementById('playingTitle').innerText = title;
+    let url = link.includes('youtube.com/watch?v=') ? link.replace('watch?v=', 'embed/') : link.replace('/view', '/preview');
+    player.innerHTML = `<iframe src="${url}" allowfullscreen allow="autoplay"></iframe>`;
+    
+    clearInterval(rewardInterval);
+    rewardInterval = setInterval(async () => {
+        const newCoins = (userData.bpcoins || 0) + 4;
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { bpcoins: newCoins });
+    }, 60000);
+}
+
+document.getElementById('closeVideo').onclick = () => {
+    document.getElementById('videoModal').classList.add('hidden');
+    document.getElementById('playerBox').innerHTML = '';
+    clearInterval(rewardInterval);
+};
 
 async function renderRank() {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-red-500 font-black mb-6 uppercase text-[10px] tracking-widest italic">Global Leaderboard</h2>`;
+    grid.innerHTML = `<h2 class="text-red-500 font-black mb-6 uppercase text-[10px] italic">Global Rank</h2>`;
     const q = query(collection(db, "users"), orderBy("bpcoins", "desc"), limit(10));
     const snap = await getDocs(q);
-    let rank = 1;
-    snap.forEach(userDoc => {
-        const data = userDoc.data();
-        const div = document.createElement('div');
-        div.className = "p-4 bg-slate-900/50 rounded-2xl mb-2 flex justify-between items-center border border-slate-800/50";
-        div.innerHTML = `
-            <div class="flex items-center gap-4">
-                <span class="text-slate-600 font-black italic text-lg">#${rank++}</span>
-                <div>
-                    <div class="text-[11px] font-black text-slate-200 uppercase italic">${data.name || 'Student'}</div>
-                    <div class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">${data.role}</div>
-                </div>
-            </div>
-            <div class="text-yellow-500 font-black text-xs italic">${data.bpcoins || 0} BP</div>`;
-        grid.appendChild(div);
+    let r = 1;
+    snap.forEach(d => {
+        const data = d.data();
+        grid.innerHTML += `<div class="p-4 bg-slate-900 rounded-2xl mb-2 flex justify-between border border-slate-800">
+            <span class="text-slate-500 font-black italic">#${r++} ${data.name}</span>
+            <span class="text-yellow-500 font-black">${data.bpcoins || 0} BP</span>
+        </div>`;
     });
 }
 
-function renderNCERT() {
+async function renderDocs(type) {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-500 font-bold mb-4 uppercase text-[10px] tracking-widest italic">NCERT PDF Library</h2>`;
-    ["Biology", "Physics", "Chemistry"].forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer active:scale-95 transition-all";
-        div.innerHTML = `<span class="font-black text-slate-200 text-xs uppercase italic">${sub} NCERT</span><i class="fas fa-file-pdf text-blue-500"></i>`;
-        div.onclick = () => {
-            navHistory.push(() => renderNCERT());
-            renderNCERTPDFs(sub);
-        };
-        grid.appendChild(div);
-    });
-}
-
-async function renderNCERTPDFs(sub) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 text-[10px] uppercase italic">${sub} Chapters</h2>`;
-    const q = query(collection(db, "materials"), where("type", "==", "pdf"), where("subject", "==", sub));
+    grid.innerHTML = `<h2 class="text-blue-500 font-black mb-4 uppercase text-[10px] tracking-widest italic">${type.toUpperCase()} Store</h2>`;
+    const q = query(collection(db, "materials"), where("type", "==", type));
     const snap = await getDocs(q);
-    if (snap.empty) grid.innerHTML += `<p class="text-[10px] text-slate-700 italic">Coming Soon...</p>`;
-    snap.forEach(doc => {
-        const data = doc.data();
-        const div = document.createElement('div');
-        div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800";
-        div.innerHTML = `<span class="text-[10px] text-slate-400 font-bold uppercase">${data.chapter}</span><a href="${data.link}" target="_blank" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase">Open PDF</a>`;
-        grid.appendChild(div);
+    if(snap.empty) grid.innerHTML += `<p class="text-[10px] text-slate-700">Nothing found here yet.</p>`;
+    snap.forEach(d => {
+        const data = d.data();
+        grid.innerHTML += `<div class="p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800">
+            <span class="text-[10px] text-slate-300 font-bold uppercase">${data.chapter}</span>
+            <a href="${data.link}" target="_blank" class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[9px] font-black uppercase">Open</a>
+        </div>`;
     });
 }
 
 function setupTeacherPanel() {
-    const subSel = document.getElementById('upSubject');
-    if(subSel) subSel.innerHTML = `<option value="">Subject</option>` + ["Biology", "Physics", "Chemistry"].map(s => `<option value="${s}">${s}</option>`).join('');
+    const sel = document.getElementById('upSubject');
+    sel.innerHTML = `<option value="">Select Subject</option>` + ["Biology", "Physics", "Chemistry"].map(s => `<option value="${s}">${s}</option>`).join('');
 }
 
 document.getElementById('uploadBtn').onclick = async () => {
-    const data = {
-        type: document.getElementById('upType').value,
-        subject: document.getElementById('upSubject').value,
-        chapter: document.getElementById('upChapter').value,
-        link: document.getElementById('upLink').value,
-        createdAt: Date.now()
-    };
-    if(!data.link || !data.subject) return alert("Fill all fields!");
+    const data = { type: document.getElementById('upType').value, subject: document.getElementById('upSubject').value, chapter: document.getElementById('upChapter').value, link: document.getElementById('upLink').value, createdAt: Date.now() };
+    if(!data.link) return alert("Paste link!");
     await addDoc(collection(db, "materials"), data);
-    alert("Published successfully!");
+    alert("Published!");
 };
 
 document.getElementById('authBtn').onclick = async () => {
@@ -259,43 +256,23 @@ document.getElementById('authBtn').onclick = async () => {
     try {
         if (isSignup) {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await setDoc(doc(db, "users", res.user.uid), {
-                name: document.getElementById('regName').value,
-                email: email,
-                role: document.getElementById('regRole').value,
-                paid: false, blocked: false, bpcoins: 0
-            });
-        } else {
-            await signInWithEmailAndPassword(auth, email, pass);
-        }
+            await setDoc(doc(db, "users", res.user.uid), { name: document.getElementById('regName').value, email: email, role: document.getElementById('regRole').value, bpcoins: 0 });
+        } else await signInWithEmailAndPassword(auth, email, pass);
     } catch (e) { document.getElementById('authMsg').innerText = e.message; }
 };
 
-document.getElementById('tabStudy').onclick = () => {
-    setActiveTab('tabStudy');
-    navHistory = [];
-    renderSubjects();
-};
-document.getElementById('tabNcert').onclick = () => {
-    setActiveTab('tabNcert');
-    navHistory = [];
-    renderNCERT();
-};
-document.getElementById('tabRank').onclick = () => {
-    setActiveTab('tabRank');
-    navHistory = [];
-    renderRank();
-};
+document.getElementById('tabStudy').onclick = () => { setActiveTab('tabStudy'); renderSubjects(); };
+document.getElementById('tabNcert').onclick = () => { setActiveTab('tabNcert'); renderDocs("pdf"); };
+document.getElementById('tabPyq').onclick = () => { setActiveTab('tabPyq'); renderDocs("pyq"); };
+document.getElementById('tabRank').onclick = () => { setActiveTab('tabRank'); renderRank(); };
 
 function setActiveTab(id) {
-    document.querySelectorAll('.nav-tab').forEach(t => {
-        t.classList.remove('active', 'text-yellow-500');
-        t.classList.add('text-slate-500');
-    });
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active', 'text-yellow-500'));
     document.getElementById(id).classList.add('active', 'text-yellow-500');
+    navHistory = [];
 }
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
 document.getElementById('globalBackBtn').onclick = () => { if(navHistory.length > 0) (navHistory.pop())(); };
 document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
-        
+                   
