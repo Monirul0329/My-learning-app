@@ -1,80 +1,68 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>mNeet PRO | Modular Version</title>
+    <title>mNeet Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #020617; color: #e2e8f0; font-family: sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        input:focus { border-color: #eab308; outline: none; }
+    </style>
 </head>
-<body class="bg-slate-950 text-slate-200 antialiased font-sans">
+<body>
 
-    <header id="appHeader" class="hidden fixed top-0 w-full z-[100] bg-slate-900/90 backdrop-blur-xl border-b border-slate-800 p-4">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-black text-yellow-500 italic tracking-tighter">mNeet <span class="text-white">PRO</span></h1>
-            <div id="userInfo" class="flex items-center gap-4">
-                <div id="coinDisplay" class="hidden flex items-center gap-2 bg-yellow-600/10 border border-yellow-500/20 px-3 py-1.5 rounded-full">
-                    <i class="fas fa-coins text-yellow-500 text-xs"></i>
-                    <span id="bpValue" class="text-yellow-500 font-black text-xs">0</span>
-                </div>
-                <button id="logoutBtn" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-red-500 transition">
-                    <i class="fas fa-power-off text-sm"></i>
-                </button>
+    <header id="mainNav" class="hidden fixed top-0 w-full z-50 glass p-4 flex justify-between items-center">
+        <h1 class="text-xl font-black text-yellow-500 italic">MNEET PRO</h1>
+        <div class="flex items-center gap-4">
+            <div id="coinBox" class="hidden bg-yellow-600/20 border border-yellow-500/50 px-3 py-1 rounded-full text-yellow-500 font-bold text-xs">
+                <span id="bpValue">0</span> BP
             </div>
+            <button onclick="logout()" class="text-slate-400 hover:text-red-500"><i class="fas fa-power-off"></i></button>
         </div>
     </header>
 
     <div id="authPage" class="min-h-screen flex items-center justify-center p-6">
-        <div class="w-full max-w-md bg-slate-900 p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden">
-            <div class="absolute -top-24 -right-24 w-48 h-48 bg-yellow-600/10 blur-[80px] rounded-full"></div>
+        <div class="w-full max-w-md glass p-8 rounded-[2.5rem] shadow-2xl text-center">
+            <h2 class="text-4xl font-black text-yellow-500 italic mb-8">MNEET</h2>
             
-            <div class="relative z-10">
-                <h2 class="text-4xl font-black text-center text-yellow-500 mb-2 italic uppercase">mNeet</h2>
-                <p class="text-center text-slate-500 text-[10px] font-bold tracking-[0.2em] mb-8 uppercase">Future of WB Education</p>
-                
-                <div id="roleSelection" class="flex p-1 bg-black/50 rounded-2xl mb-6 border border-slate-800">
-                    <button onclick="setRole('student')" id="btnStudent" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all bg-yellow-600 text-black">Student</button>
-                    <button onclick="setRole('teacher')" id="btnTeacher" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all text-slate-500">Teacher</button>
-                    <button onclick="setRole('admin')" id="btnAdmin" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase transition-all text-slate-500">Admin</button>
-                </div>
-
-                <div id="signupFields" class="hidden space-y-3 mb-3">
-                    <input type="text" id="regName" placeholder="Apnar Full Name" class="w-full p-4 rounded-2xl bg-black/40 border border-slate-800 outline-none focus:border-yellow-600 transition text-sm">
-                    <select id="teacherSub" class="hidden w-full p-4 rounded-2xl bg-black/40 border border-slate-800 outline-none focus:border-yellow-600 text-slate-400 text-sm">
-                        <option value="">Select Subject</option>
-                        <option value="Biology">Biology</option>
-                        <option value="Physics">Physics</option>
-                        <option value="Chemistry">Chemistry</option>
-                    </select>
-                </div>
-
-                <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-black/40 border border-slate-800 outline-none focus:border-yellow-600 transition text-sm mb-3">
-                <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-black/40 border border-slate-800 outline-none focus:border-yellow-600 transition text-sm mb-6">
-                
-                <button id="authBtn" class="w-full bg-yellow-600 hover:bg-yellow-500 py-4 rounded-2xl font-black uppercase text-black shadow-lg shadow-yellow-600/20 active:scale-[0.98] transition">Continue</button>
-                
-                <div class="flex flex-col items-center mt-8 gap-4">
-                    <button id="forgotBtn" class="text-[9px] uppercase font-black text-slate-500 hover:text-slate-300">Forgot Password?</button>
-                    <button id="toggleAuth" class="text-[10px] uppercase font-black text-yellow-500 border-b border-yellow-500/30 pb-1">Create New Access</button>
-                </div>
+            <div class="flex p-1 bg-black rounded-2xl mb-6 border border-slate-800">
+                <button onclick="switchRole('student')" id="role-student" class="flex-1 py-3 rounded-xl text-[10px] font-bold uppercase bg-yellow-600 text-black">Student</button>
+                <button onclick="switchRole('teacher')" id="role-teacher" class="flex-1 py-3 rounded-xl text-[10px] font-bold uppercase text-slate-500">Teacher</button>
+                <button onclick="switchRole('admin')" id="role-admin" class="flex-1 py-3 rounded-xl text-[10px] font-bold uppercase text-slate-500">Admin</button>
             </div>
+
+            <div id="regFields" class="hidden space-y-3 mb-3">
+                <input type="text" id="name" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-black border border-slate-800 text-sm">
+                <select id="subject" class="hidden w-full p-4 rounded-2xl bg-black border border-slate-800 text-sm text-slate-400">
+                    <option value="">Select Subject</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                </select>
+            </div>
+
+            <input type="email" id="email" placeholder="Email" class="w-full p-4 rounded-2xl bg-black border border-slate-800 text-sm mb-3">
+            <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-black border border-slate-800 text-sm mb-6">
+            
+            <button id="mainBtn" onclick="handleAuth()" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black">Sign In</button>
+            
+            <button onclick="toggleReg()" id="toggleBtn" class="mt-6 text-[10px] font-bold text-yellow-500 uppercase border-b border-yellow-500/20">Create New Access</button>
         </div>
     </div>
 
-    <main id="appBody" class="hidden pt-28 pb-32 max-w-4xl mx-auto px-6"></main>
+    <main id="appBody" class="hidden pt-24 pb-32 max-w-4xl mx-auto px-6"></main>
 
-    <div id="playerModal" class="hidden fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl flex flex-col">
-        <div class="flex justify-between items-center p-6 border-b border-slate-800">
-            <div id="timerDisplay" class="bg-red-600/20 text-red-500 border border-red-500/30 px-4 py-1.5 rounded-full font-mono font-black text-sm hidden">00:00</div>
-            <button id="closeModal" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-white text-2xl">&times;</button>
+    <div id="quizModal" class="hidden fixed inset-0 z-[100] bg-black/95 flex flex-col p-6">
+        <div class="flex justify-between items-center mb-6">
+            <div id="timer" class="bg-red-600 text-white px-4 py-1 rounded-full font-mono font-bold">00:00</div>
+            <button onclick="closeQuiz()" class="text-3xl">&times;</button>
         </div>
-        <div id="modalContent" class="flex-1 overflow-y-auto p-6 flex flex-col items-center justify-start">
-            </div>
+        <div id="quizContent" class="flex-1 overflow-y-auto"></div>
     </div>
 
-    <script type="module" src="auth.js"></script>
-
+    <script type="module" src="app.js"></script>
 </body>
-    </html>
-    
+</html>
