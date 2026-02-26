@@ -66,6 +66,31 @@
         <main id="dashboard" class="pt-24 pb-32 px-6 max-w-4xl mx-auto"></main>
     </div>
 
+        <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        
+        // ⚠️ এখানে তোমার নিজের Firebase Config বসাতে ভুলো না
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Firebase Initialize করা হচ্ছে
+        const app = initializeApp(firebaseConfig);
+    </script>
+
     <script type="module" src="auth.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type="module" src="teacher_logic.js"></script>
+    <script type="module" src="student_logic.js"></script>
+    <script type="module" src="quiz_engine.js"></script>
+    <script type="module" src="video_system.js"></script>
+    <script type="module" src="library_system.js"></script>
+    <script type="module" src="admin_logic.js"></script>
+    
 </body>
 </html>
