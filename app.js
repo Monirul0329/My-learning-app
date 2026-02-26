@@ -14,6 +14,77 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const SYLLABUS = {
+    "Biology": {
+        "01. The Living World": ["1.1 What is Living?", "1.2 Diversity in Living World", "1.3 Taxonomic Categories"],
+        "02. Biological Classification": ["2.1 Kingdom Monera", "2.2 Kingdom Protista", "2.3 Fungi, Plantae, Animalia", "2.4 Viruses & Lichens"],
+        "03. Plant Kingdom": ["3.1 Algae", "3.2 Bryophytes", "3.3 Pteridophytes", "3.4 Gymnosperms & Angiosperms"],
+        "04. Animal Kingdom": ["4.1 Basis of Classification", "4.2 Non-Chordates", "4.3 Chordates"],
+        "05. Morphology of Flowering Plants": ["5.1 Root, Stem, Leaf", "5.2 Inflorescence", "5.3 Flower, Fruit, Seed"],
+        "06. Anatomy of Flowering Plants": ["6.1 Tissues", "6.2 Tissue System", "6.3 Dicot & Monocot Anatomy"],
+        "07. Structural Organisation in Animals": ["7.1 Animal Tissues", "7.2 Cockroach/Frog Study"],
+        "08. Cell: The Unit of Life": ["8.1 Prokaryotic Cell", "8.2 Eukaryotic Cell", "8.3 Cell Organelles"],
+        "09. Biomolecules": ["9.1 Carbohydrates & Proteins", "9.2 Nucleic Acids", "9.3 Enzymes"],
+        "10. Cell Cycle & Cell Division": ["10.1 Interphase", "10.2 Mitosis", "10.3 Meiosis"],
+        "11. Photosynthesis in Higher Plants": ["11.1 Light Reaction", "11.2 Dark Reaction (C3/C4)"],
+        "12. Respiration in Plants": ["12.1 Glycolysis", "12.2 Krebs Cycle", "12.3 ETS"],
+        "13. Plant Growth & Development": ["13.1 Growth Regulators (Auxin, Cytokinin)", "13.2 Photoperiodism"],
+        "14. Breathing & Exchange of Gases": ["14.1 Mechanism of Breathing", "14.2 Gas Transport"],
+        "15. Body Fluids & Circulation": ["15.1 Blood & Lymph", "15.2 Heart & Cardiac Cycle"],
+        "16. Excretory Products & Elimination": ["16.1 Nephron Structure", "16.2 Urine Formation"],
+        "17. Locomotion & Movement": ["17.1 Muscle Contraction", "17.2 Skeletal System"],
+        "18. Neural Control & Coordination": ["18.1 Nerve Impulse", "18.2 Reflex Action"],
+        "19. Chemical Coordination": ["19.1 Endocrine Glands", "19.2 Hormone Action"],
+        "20. Sexual Reproduction in Flowering Plants": ["20.1 Pollination", "20.2 Double Fertilization"],
+        "21. Human Reproduction": ["21.1 Male/Female System", "21.2 Gametogenesis", "21.3 Fertilization"],
+        "22. Reproductive Health": ["22.1 Birth Control", "22.2 Infertility & IVF"],
+        "23. Principles of Inheritance": ["23.1 Mendel’s Laws", "23.2 Sex Determination", "23.3 Genetic Disorders"],
+        "24. Molecular Basis of Inheritance": ["24.1 DNA & RNA", "24.2 Replication", "24.3 Transcription & Translation"],
+        "25. Evolution": ["25.1 Origin of Life", "25.2 Darwinism", "25.3 Human Evolution"],
+        "26. Human Health & Disease": ["26.1 Common Diseases", "26.2 Immunity", "26.3 AIDS & Cancer"],
+        "27. Microbes in Human Welfare": ["27.1 Household & Industrial Products", "27.2 Sewage Treatment"],
+        "28. Biotechnology: Principles": ["28.1 Recombinant DNA Technology", "28.2 Restriction Enzymes"],
+        "29. Biotechnology: Applications": ["29.1 Bt Cotton & Insulin", "29.2 Gene Therapy"],
+        "30. Organisms & Populations": ["30.1 Population Attributes", "30.2 Interactions"],
+        "31. Ecosystem": ["31.1 Productivity & Decomposition", "31.2 Energy Flow"],
+        "32. Biodiversity & Conservation": ["32.1 Patterns of Biodiversity", "32.2 In-situ & Ex-situ Conservation"]
+    },
+    "Physics": {
+        "01. Units & Measurements": ["1.1 SI Units", "1.2 Error Analysis", "1.3 Dimensions"],
+        "02. Motion in a Straight Line": ["2.1 Kinematics Graphs", "2.2 Relative Velocity"],
+        "03. Motion in a Plane": ["3.1 Vector Addition", "3.2 Projectile Motion"],
+        "04. Laws of Motion": ["4.1 Newton’s Laws", "4.2 Friction", "4.3 Circular Motion"],
+        "05. Work, Energy & Power": ["5.1 Work-Energy Theorem", "5.2 Collisions"],
+        "06. System of Particles": ["6.1 Center of Mass", "6.2 Torque & Angular Momentum"],
+        "07. Gravitation": ["7.1 Kepler’s Laws", "7.2 Gravitational Potential"],
+        "08. Thermodynamics": ["8.1 Laws of Thermodynamics", "8.2 Heat Engines"],
+        "09. Electrostatics": ["9.1 Coulomb’s Law", "9.2 Gauss Theorem"],
+        "10. Ray Optics": ["10.1 Reflection & Refraction", "10.2 Optical Instruments"]
+    },
+    "Physical Chemistry": {
+        "01. Basic Concepts": ["1.1 Mole Concept", "1.2 Stoichiometry"],
+        "02. Structure of Atom": ["2.1 Bohr’s Model", "2.2 Quantum Numbers"],
+        "03. Chemical Thermodynamics": ["3.1 Enthalpy", "3.2 Entropy & Gibbs Free Energy"],
+        "04. Equilibrium": ["4.1 Ionic Equilibrium", "4.2 pH Scale"],
+        "05. Chemical Kinetics": ["5.1 Rate Laws", "5.2 Activation Energy"]
+    },
+    "Inorganic Chemistry": {
+        "01. Periodic Classification": ["1.1 Periodic Trends", "1.2 Ionization Enthalpy"],
+        "02. Chemical Bonding": ["2.1 VSEPR Theory", "2.2 Hybridization"],
+        "03. p-Block Elements": ["3.1 Group 13 to 18"],
+        "04. d & f Block Elements": ["4.1 Transition Elements", "4.2 Lanthanoids"],
+        "05. Coordination Compounds": ["5.1 IUPAC Naming", "5.2 Crystal Field Theory"]
+    },
+    "Organic Chemistry": {
+        "01. General Organic Chemistry": ["1.1 Isomerism", "1.2 Electronic Effects (Inductive, Resonance)"],
+        "02. Hydrocarbons": ["2.1 Alkanes, Alkenes, Alkynes"],
+        "03. Haloalkanes & Haloarenes": ["3.1 SN1 & SN2 Reactions"],
+        "04. Alcohol, Phenol & Ether": ["4.1 Chemical Properties", "4.2 Identification Tests"],
+        "05. Aldehydes & Ketones": ["5.1 Nucleophilic Addition", "5.2 Name Reactions"],
+        "06. Amines": ["6.1 Basicity of Amines"]
+    }
+};
+                                              
 
 let userData = null;
 const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
@@ -92,22 +163,56 @@ window.removeUser = async (uid) => {
 
 function setupTeacherPanel() {
     const subSel = document.getElementById('upSubject');
-    const subjects = ["Biology", "Physics", "Chemistry"];
-    subSel.innerHTML = subjects.map(s => `<option value="${s}">${s}</option>`).join('');
+    const chSel = document.getElementById('upChapter');
+    const topSel = document.getElementById('upTopic');
+
+    subSel.innerHTML = `<option value="">Select Subject</option>` + 
+        Object.keys(SYLLABUS).map(s => `<option value="${s}">${s}</option>`).join('');
+    subSel.onchange = () => {
+        const sub = subSel.value;
+        if(sub && SYLLABUS[sub]) {
+            const chapters = Object.keys(SYLLABUS[sub]);
+            document.getElementById('upChapter').outerHTML = `<select id="upChapter" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"></select>`;
+            const newChSel = document.getElementById('upChapter');
+            newChSel.innerHTML = `<option value="">Select Chapter</option>` + 
+                chapters.map(c => `<option value="${c}">${c}</option>`).join('');
+            
+            newChSel.onchange = () => {
+                const ch = newChSel.value;
+                if(ch && SYLLABUS[sub][ch]) {
+                    document.getElementById('upTopic').outerHTML = `<select id="upTopic" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"></select>`;
+                    const newTopSel = document.getElementById('upTopic');
+                    newTopSel.innerHTML = SYLLABUS[sub][ch].map(t => `<option value="${t}">${t}</option>`).join('');
+                }
+            };
+        }
+    };
 }
 
 document.getElementById('uploadBtn').onclick = async () => {
-    const material = {
-        type: document.getElementById('upType').value,
-        subject: document.getElementById('upSubject').value,
-        chapter: document.getElementById('upChapter').value,
-        topic: document.getElementById('upTopic').value,
-        link: document.getElementById('upLink').value,
-        createdAt: Date.now()
-    };
-    if(!material.chapter || !material.topic || !material.link) return alert("Fill all info!");
-    await addDoc(collection(db, "materials"), material);
-    alert("Content Uploaded Successfully!");
+    const type = document.getElementById('upType').value;
+    const subject = document.getElementById('upSubject').value;
+    const chapter = document.getElementById('upChapter').value;
+    const topic = document.getElementById('upTopic').value;
+    const link = document.getElementById('upLink').value;
+
+    if(!subject || !chapter || !topic || !link) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    try {
+        await addDoc(collection(db, "materials"), {
+            type, subject, chapter, topic, link,
+            teacherId: auth.currentUser.uid,
+            teacherName: userData.name,
+            createdAt: Date.now()
+        });
+        alert("Success! Content published to Student Dashboard.");
+        document.getElementById('upLink').value = "";
+    } catch(e) {
+        alert("Upload failed: " + e.message);
+    }
 };
 
 document.getElementById('authBtn').onclick = async () => {
