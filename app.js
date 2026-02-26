@@ -134,20 +134,42 @@ function renderSubjects() {
     });
 }
 
-function renderChemistryParts() {
+function renderSubjects() {
     const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
-    Object.keys(SYLLABUS.Chemistry).forEach(part => {
+    if (!grid) return;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
         const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800/40 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
-        div.innerHTML = `<span class="font-bold text-slate-200 text-xs italic uppercase">${part}</span><i class="fas fa-flask text-xs"></i>`;
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3";
+        div.innerHTML = `<div><div class="font-black text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        
         div.onclick = () => {
-            navHistory.push(() => renderChemistryParts());
-            renderChapters("Chemistry", part);
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") {
+                
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+
+    ["Biology", "Physics", "Chemistry"].forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3";
+        div.innerHTML = `<div><div class="font-black text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") {
+                renderChemistryParts();
+            } else {
+                renderChapters(sub);
+            }
         };
         grid.appendChild(div);
     });
 }
+                
 
 function renderChapters(sub, part = null) {
     const grid = document.getElementById('mainGrid');
@@ -244,19 +266,33 @@ document.getElementById('authBtn').onclick = async () => {
     const email = document.getElementById('email').value.trim();
     const pass = document.getElementById('pass').value.trim();
     const isSignup = !document.getElementById('signupFields').classList.contains('hidden');
+
     try {
         if (isSignup) {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
                 name: document.getElementById('regName').value,
-                email: email, role: document.getElementById('regRole').value,
-                paid: false, blocked: false, bpcoins: 0
+                email: email,
+                role: document.getElementById('regRole').value,
+                paid: false, 
+                blocked: false, 
+                bpcoins: 0
             });
-        } else await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) { document.getElementById('authMsg').innerText = e.message; }
+        } else {
+            await signInWithEmailAndPassword(auth, email, pass);
+        }
+    } catch (e) {
+        document.getElementById('authMsg').innerText = e.message;
+    }
+};
+document.getElementById('logoutBtn').onclick = () => {
+    signOut(auth).then(() => {
+        location.reload();
+    }).catch((error) => {
+        console.error("Logout Error:", error);
+    });
 };
 
-document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
 document.getElementById('globalBackBtn').onclick = () => { if(navHistory.length > 0) (navHistory.pop())(); };
 document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
             
