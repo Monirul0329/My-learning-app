@@ -11,34 +11,35 @@
         body { background-color: var(--bg); font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
         .nav-tab.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
-        .lock-overlay { position: relative; }
-        .lock-overlay::after { content: "\f023"; font-family: "Font Awesome 5 Free"; font-weight: 900; position: absolute; right: 20px; color: rgba(255,255,255,0.2); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        input, select { color-scheme: dark; }
     </style>
 </head>
 <body class="text-slate-200">
 
     <header id="mainHeader" class="hidden fixed top-0 w-full glass p-4 z-50 flex justify-between items-center">
-        <button id="globalBackBtn" class="w-10 h-10 flex items-center justify-center rounded-full active:bg-slate-800"><i class="fas fa-arrow-left text-yellow-500"></i></button>
+        <button id="globalBackBtn" class="w-10 h-10 flex items-center justify-center rounded-full active:bg-slate-800">
+            <i class="fas fa-arrow-left text-yellow-500"></i>
+        </button>
         <div class="text-center">
-            <div class="font-black text-xl italic text-yellow-500">mNeet 2026</div>
-            <div id="userLevelDisplay" class="text-[8px] font-bold uppercase text-slate-500 tracking-tighter">Level: Loading...</div>
+            <div class="font-black text-xl italic text-yellow-500 uppercase tracking-tighter">mNeet 2026</div>
+            <div id="userLevelDisplay" class="text-[8px] font-bold uppercase text-slate-500">Rank: Loading...</div>
         </div>
         <div class="flex items-center gap-2">
-            <div class="bg-yellow-500 text-black px-3 py-1 rounded-full font-black text-[10px]"><span id="coins">0</span> BP</div>
-            <button id="logoutBtn" class="text-slate-500"><i class="fas fa-power-off"></i></button>
+            <div class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-3 py-1 rounded-full font-black text-[10px]">
+                <span id="coins">0</span> BP
+            </div>
+            <button id="logoutBtn" class="text-slate-500 p-2"><i class="fas fa-power-off"></i></button>
         </div>
     </header>
 
     <div id="authPage" class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
             <h1 class="text-4xl font-black text-yellow-500 mb-2 italic text-center">mNeet</h1>
-            <p class="text-slate-500 text-[10px] uppercase text-center tracking-widest mb-8">Future Doctor's Portal</p>
+            <p class="text-slate-500 text-[10px] uppercase text-center tracking-widest mb-8">Doctor's Education Portal</p>
             
             <div id="signupFields" class="hidden space-y-3 mb-4">
                 <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
-                <input type="text" id="regCity" placeholder="City" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
-                <input type="text" id="regTxn" placeholder="Payment Txn ID (Optional for Demo)" class="w-full p-4 rounded-2xl bg-slate-950 border border-yellow-900/30 outline-none">
                 <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none text-xs">
                     <option value="student">Student Account</option>
                     <option value="teacher">Teacher Account</option>
@@ -52,8 +53,7 @@
             </div>
             
             <div class="flex justify-between mt-6 px-2">
-                <button onclick="forgetPassword()" class="text-[9px] font-bold text-slate-600 uppercase">Forget Password?</button>
-                <button id="toggleAuth" class="text-[9px] font-bold text-yellow-500 uppercase underline">New Access</button>
+                <button id="toggleAuth" class="text-[9px] font-bold text-yellow-500 uppercase underline">Create New Access</button>
             </div>
             <p id="authMsg" class="mt-4 text-center text-red-500 text-[10px] font-bold"></p>
         </div>
@@ -63,86 +63,48 @@
         
         <section id="studentPanel" class="hidden">
             <div class="flex gap-6 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar">
-                <button onclick="changeTab('study')" id="tabStudy" class="nav-tab active pb-2 font-black text-[10px] uppercase whitespace-nowrap">Let's Study</button>
-                <button onclick="changeTab('ncert')
-               function changeTab(tab) {
-    currentTab = tab;
-    const grid = document.getElementById('mainGrid');
-    if (tab === 'ncert') {
-        renderNCERTSubjects();
-    } else {
-        renderSubjects();
-    }
-}
-
-function renderNCERTSubjects() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-blue-400 font-bold mb-4 uppercase">NCERT Textbooks</h2>`;
-    
-    ["Biology", "Physics", "Chemistry"].forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-blue-900/10 rounded-2xl mb-3 border border-blue-900/30 flex justify-between items-center cursor-pointer";
-        div.innerHTML = `<span class="font-bold text-blue-200">${sub} NCERT</span><i class="fas fa-file-pdf"></i>`;
-        div.onclick = () => alert(sub + " PDF Upload system coming soon!"); 
-        grid.appendChild(div);
-    });
-}
-                <button onclick="changeTab('rank')" id="tabRank" class="nav-tab pb-2 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap">Weekly Rank</button>
+                <button onclick="changeTab('study')" class="nav-tab active pb-2 font-black text-[10px] uppercase whitespace-nowrap">Let's Study</button>
+                <button onclick="changeTab('ncert')" class="nav-tab pb-2 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap">NCERT Books</button>
+                <button onclick="changeTab('rank')" class="nav-tab pb-2 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap">Weekly Rank</button>
             </div>
             
             <div id="progressZone" class="mb-8 bg-slate-900/50 p-4 rounded-3xl border border-slate-800">
-                <div class="flex justify-between text-[9px] font-black uppercase mb-2"><span>Syllabus Progress</span> <span id="totalPercent">0%</span></div>
-                <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden"><div id="totalProgressBar" class="bg-yellow-500 h-full transition-all duration-1000" style="width: 0%"></div></div>
+                <div class="flex justify-between text-[9px] font-black uppercase mb-2">
+                    <span>Target NEET 2026</span> <span id="totalPercent">65% Readiness</span>
+                </div>
+                <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
+                    <div id="totalProgressBar" class="bg-yellow-500 h-full transition-all duration-1000" style="width: 65%"></div>
+                </div>
             </div>
 
-            <div id="mainGrid" class="space-y-4"></div>
+            <div id="mainGrid" class="space-y-4">
+                </div>
         </section>
 
         <section id="teacherPanel" class="hidden space-y-6">
             <div class="p-6 bg-blue-900/10 border border-blue-900/30 rounded-[2rem]">
-                <h2 class="text-blue-500 font-black italic mb-4">CONTENT STUDIO</h2>
+                <h2 class="text-blue-500 font-black italic mb-4 uppercase text-xs">Upload Material</h2>
                 <div class="space-y-3">
-                    <select id="upType" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"><option value="video">Lecture Video</option><option value="pdf">NCERT/Docs</option><option value="quiz">Chapter Quiz</option></select>
-                    
-                    <select id="upSubject" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"></select>
-<select id="upChapter" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-    <option>Select Subject First</option>
-</select>
-<select id="upTopic" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs">
-    <option>Select Chapter First</option>
-</select>
-                    
-                    <input type="text" id="upTopic" placeholder="Topic (e.g., 1.1 Mitochondria)" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <input type="text" id="upLink" placeholder="Link (G-Drive/YT)" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <button id="uploadBtn" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-xs active:scale-95">Publish to mNeet</button>
+                    <select id="upType" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                        <option value="video">Lecture Video (Link)</option>
+                        <option value="pdf">NCERT PDF (Link)</option>
+                    </select>
+                    <select id="upSubject" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"></select>
+                    <input type="text" id="upChapter" placeholder="Chapter Name" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none">
+                    <input type="text" id="upLink" placeholder="Paste G-Drive or YouTube Link" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-white outline-none">
+                    <button id="uploadBtn" class="w-full bg-blue-600 py-4 rounded-xl font-black uppercase text-xs active:scale-95 transition-all">Publish Content</button>
                 </div>
             </div>
         </section>
 
         <section id="adminPanel" class="hidden space-y-6">
-            <h2 class="text-red-500 font-black italic uppercase">Admin Command Center</h2>
+            <h2 class="text-red-500 font-black italic uppercase text-xs">User Management Center</h2>
             <div class="space-y-3" id="adminUserList"></div>
         </section>
-
-        <div id="quizScreen" class="hidden fixed inset-0 z-[60] bg-[#020617] p-6">
-            <div class="flex justify-between items-center mb-10">
-                <div id="timerDisplay" class="w-14 h-14 rounded-full border-4 border-yellow-500 flex items-center justify-center font-black text-xl">60</div>
-                <div class="text-[10px] font-bold text-slate-500 uppercase">Attempt: <span id="attemptCount">1</span></div>
-            </div>
-            <div id="questionContainer" class="space-y-6">
-                <div id="qText" class="text-lg font-bold leading-tight">Loading Question...</div>
-                <div id="optionsGrid" class="space-y-3"></div>
-            </div>
-            <div class="fixed bottom-10 left-6 right-6 flex gap-3">
-                <button id="prevBtn" class="flex-1 p-4 rounded-2xl bg-slate-900 font-bold uppercase text-[10px]">Prev</button>
-                <button id="nextBtn" class="flex-1 p-4 rounded-2xl bg-slate-900 font-bold uppercase text-[10px]">Next</button>
-                <button id="submitAnsBtn" class="flex-1 p-4 rounded-2xl bg-yellow-600 text-black font-black uppercase text-[10px]">Submit</button>
-            </div>
-        </div>
 
     </main>
 
     <script type="module" src="app.js"></script>
 </body>
-                        </html>
-                        
+                </html>
+                    pppp
