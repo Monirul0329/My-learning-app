@@ -1,72 +1,71 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>mNeet PRO | Ultimate</title>
+    <title>mNeet Ultimate PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #020617; color: #f1f5f9; font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
-        .input-dark { background: #000; border: 1px solid #1e293b; color: white; padding: 1rem; border-radius: 1rem; width: 100%; outline: none; }
-        .input-dark:focus { border-color: #eab308; }
-        .btn-primary { background: #eab308; color: #000; font-weight: 900; text-transform: uppercase; padding: 1rem; border-radius: 1rem; width: 100%; transition: 0.3s; }
-        .btn-primary:active { scale: 0.95; }
+        :root { --gold: #eab308; --dark: #020617; }
+        body { background: var(--dark); color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .input-premium { background: #000; border: 1px solid #1e293b; color: white; padding: 1rem; border-radius: 1rem; width: 100%; outline: none; transition: 0.3s; }
+        .input-premium:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
+        .btn-gold { background: linear-gradient(to right, #eab308, #ca8a04); color: #000; font-weight: 900; padding: 1rem; border-radius: 1rem; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
+        .role-btn { flex: 1; py: 3; border-radius: 0.75rem; font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; transition: 0.3s; border: 1px solid transparent; }
+        .role-active { background: var(--gold); color: #000; border-color: var(--gold); }
     </style>
 </head>
-<body class="antialiased">
-
-    <header id="navbar" class="hidden fixed top-0 w-full z-50 glass-card p-4 flex justify-between items-center border-b border-slate-800">
-        <h1 class="text-xl font-black text-yellow-500 italic">mNeet <span class="text-white font-normal">PRO</span></h1>
-        <div class="flex items-center gap-4">
-            <div id="coinBox" class="hidden bg-yellow-600/10 border border-yellow-500/30 px-3 py-1.5 rounded-full">
-                <i class="fas fa-coins text-yellow-500 text-xs mr-1"></i>
-                <span id="bpDisplay" class="text-yellow-500 font-black text-xs">0</span>
-            </div>
-            <button onclick="logout()" class="text-slate-500 hover:text-red-500"><i class="fas fa-power-off"></i></button>
-        </div>
-    </header>
+<body>
 
     <section id="authPage" class="min-h-screen flex items-center justify-center p-6">
-        <div class="w-full max-w-md glass-card p-8 rounded-[2.5rem] shadow-2xl relative">
-            <div class="absolute -top-10 -left-10 w-32 h-32 bg-yellow-600/10 blur-3xl rounded-full"></div>
-            <h2 class="text-4xl font-black text-yellow-500 italic text-center mb-2">MNEET</h2>
-            <p class="text-[10px] text-slate-500 text-center uppercase tracking-widest mb-8">Future of WB Education</p>
+        <div class="w-full max-w-md glass p-8 rounded-[2.5rem] shadow-2xl relative border-t border-yellow-500/30">
+            <h2 class="text-3xl font-black text-yellow-500 italic text-center mb-2 uppercase">mNeet PRO</h2>
+            <p class="text-[9px] text-slate-500 text-center uppercase tracking-[4px] mb-8">Future of WB Education</p>
             
-            <div class="flex p-1 bg-black/50 rounded-2xl mb-6 border border-slate-800">
-                <button onclick="setRole('student')" id="role-student" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase bg-yellow-600 text-black">Student</button>
-                <button onclick="setRole('teacher')" id="role-teacher" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-500">Teacher</button>
-                <button onclick="setRole('admin')" id="role-admin" class="flex-1 py-3 rounded-xl text-[10px] font-black uppercase text-slate-500">Admin</button>
+            <div id="roleSelection" class="flex p-1 bg-black rounded-2xl mb-6 border border-slate-800">
+                <button onclick="setRole('student')" id="btn-student" class="role-btn role-active">Student</button>
+                <button onclick="setRole('teacher')" id="btn-teacher" class="role-btn">Teacher</button>
+                <button onclick="setRole('admin')" id="btn-admin" class="role-btn">Admin</button>
             </div>
 
-            <div id="signupFields" class="hidden space-y-3 mb-4">
-                <input type="text" id="regName" placeholder="Full Name" class="input-dark">
-                <select id="regSubject" class="hidden input-dark text-slate-400">
-                    <option value="Biology">Biology</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
+            <div id="signupFields" class="hidden space-y-3">
+                <input type="text" id="regName" placeholder="Full Name" class="input-premium">
+                <input type="text" id="regCity" placeholder="Your City" class="input-premium">
+                <select id="regSubject" class="hidden input-premium text-slate-400">
+                    <option value="" disabled selected>Select Your Subject</option>
+                    <option value="Biology">Biology Instructor</option>
+                    <option value="Physics">Physics Instructor</option>
+                    <option value="Chemistry">Chemistry Instructor</option>
                 </select>
             </div>
 
-            <input type="email" id="email" placeholder="Email Address" class="input-dark mb-3">
-            <input type="password" id="pass" placeholder="Password" class="input-dark mb-6">
+            <div class="mt-3 space-y-3">
+                <input type="email" id="email" placeholder="Email Address" class="input-premium">
+                <input type="password" id="pass" placeholder="Password" class="input-premium">
+            </div>
             
-            <button id="authBtn" onclick="handleAuth()" class="btn-primary">Sign In</button>
-            <button onclick="toggleAuthMode()" id="toggleBtn" class="w-full mt-6 text-[10px] font-black text-yellow-500 uppercase border-b border-yellow-500/20 pb-1">Create New Access</button>
+            <button id="authBtn" onclick="handleAuth()" class="btn-gold mt-6 shadow-lg shadow-yellow-600/20">Sign In</button>
+            
+            <p onclick="toggleAuth()" id="toggleText" class="text-center text-[10px] text-yellow-500 mt-6 uppercase cursor-pointer font-black tracking-widest">Create New Account</p>
         </div>
     </section>
 
-    <main id="appBody" class="hidden pt-28 pb-32 max-w-4xl mx-auto px-6"></main>
+    <div id="appContainer" class="hidden min-h-screen">
+        <header class="fixed top-0 w-full z-50 glass p-4 flex justify-between items-center border-b border-slate-800">
+            <h1 class="text-xl font-black text-yellow-500 italic">mNeet <span class="text-white font-normal">PRO</span></h1>
+            <div id="userMeta" class="flex items-center gap-4">
+                <div id="coinBox" class="hidden bg-yellow-600/10 border border-yellow-500/20 px-3 py-1 rounded-full">
+                    <span id="bpDisplay" class="text-yellow-500 font-bold text-xs">0 BP</span>
+                </div>
+                <button onclick="logout()" class="text-slate-500"><i class="fas fa-power-off"></i></button>
+            </div>
+        </header>
 
-    <div id="modal" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col">
-        <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-            <div id="timer" class="hidden bg-red-600/20 text-red-500 border border-red-500/30 px-4 py-1.5 rounded-full font-mono font-black text-sm">00:00</div>
-            <button onclick="closeModal()" class="text-white text-3xl font-light">&times;</button>
-        </div>
-        <div id="modalContent" class="flex-1 overflow-y-auto p-6"></div>
+        <main id="dashboard" class="pt-24 pb-32 px-6 max-w-4xl mx-auto"></main>
     </div>
 
-    <script type="module" src="app.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>
