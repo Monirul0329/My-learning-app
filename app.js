@@ -65,7 +65,8 @@ const SYLLABUS = {
         "09. Electrostatics": ["9.1 Coulomb’s Law", "9.2 Gauss Theorem"],
         "10. Ray Optics": ["10.1 Reflection & Refraction", "10.2 Optical Instruments"]
     },
-    "Physical Chemistry": {
+    "Chemistry": {
+        "Physical Chemistry": {
         "01. Basic Concepts": ["1.1 Mole Concept", "1.2 Stoichiometry"],
         "02. Structure of Atom": ["2.1 Bohr’s Model", "2.2 Quantum Numbers"],
         "03. Chemical Thermodynamics": ["3.1 Enthalpy", "3.2 Entropy & Gibbs Free Energy"],
@@ -73,7 +74,7 @@ const SYLLABUS = {
         "05. Chemical Kinetics": ["5.1 Rate Laws", "5.2 Activation Energy"]
     },
     "Inorganic Chemistry": {
-        "01. Periodic Classification": ["1.1 Periodic Trends", "1.2 Ionization Enthalpy"],
+            "01. Periodic Classification": ["1.1 Periodic Trends", "1.2 Ionization Enthalpy"],
         "02. Chemical Bonding": ["2.1 VSEPR Theory", "2.2 Hybridization"],
         "03. p-Block Elements": ["3.1 Group 13 to 18"],
         "04. d & f Block Elements": ["4.1 Transition Elements", "4.2 Lanthanoids"],
@@ -86,8 +87,66 @@ const SYLLABUS = {
         "04. Alcohol, Phenol & Ether": ["4.1 Chemical Properties", "4.2 Identification Tests"],
         "05. Aldehydes & Ketones": ["5.1 Nucleophilic Addition", "5.2 Name Reactions"],
         "06. Amines": ["6.1 Basicity of Amines"]
+        }
     }
 };
+
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+
+    const mainSubjects = ["Biology", "Physics", "Chemistry"];
+    
+    mainSubjects.forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3";
+        div.innerHTML = `<div><div class="font-black text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderSubjects());
+            if (sub === "Chemistry") {
+                renderChemistryParts();
+            } else {
+                renderChapters(sub);
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderChemistryParts() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase">Chemistry Categories</h2>`;
+    
+    Object.keys(SYLLABUS.Chemistry).forEach(part => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-slate-800/50 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
+        div.innerHTML = `<span class="font-bold text-slate-200">${part}</span><i class="fas fa-arrow-right text-xs"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderChemistryParts());
+            renderChapters("Chemistry", part);
+        };
+        grid.appendChild(div);
+    });
+}
+
+function renderChapters(sub, part = null) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase">${part ? part : sub}</h2>`;
+    
+    const chapterSource = part ? SYLLABUS[sub][part] : SYLLABUS[sub];
+    
+    Object.keys(chapterSource).forEach((ch, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-4 bg-slate-800 rounded-xl mb-2 flex justify-between cursor-pointer border border-slate-700/50";
+        div.innerHTML = `<span>${ch}</span><i class="fas fa-play text-[10px] text-yellow-500"></i>`;
+        div.onclick = () => {
+            navHistory.push(() => renderChapters(sub, part));
+            renderTopics(sub, ch, part);
+        grid.appendChild(div);
+    });
+}
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
