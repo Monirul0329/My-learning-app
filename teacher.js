@@ -38,16 +38,30 @@ export async function initTeacher(userData, db) {
         alert("Video Published!");
     };
 
-    window.uploadQuiz = async () => {
-        const img = document.getElementById('qImg').value;
-        const ans = document.getElementById('correctOpt').value;
-        const chap = document.getElementById('quizTopic').value;
-        if(!img || !chap) return;
+    // Base64 Image Converter Logic
+window.uploadQuiz = async () => {
+    const fileInput = document.getElementById('qFile'); // File input tag
+    const ans = document.getElementById('correctOpt').value;
+    const chap = document.getElementById('quizTopic').value;
+
+    if (!fileInput.files[0] || !chap) return alert("Select Image and Chapter!");
+
+    const reader = new FileReader();
+    reader.readAsDataURL(fileInput.files[0]);
+    reader.onload = async () => {
+        const base64Image = reader.result; // Direct image data
         await addDoc(collection(db, "quizzes"), {
-            image: img, answer: ans, chapter: chap, subject: userData.subject, type: 'topic-wise'
+            image: base64Image,
+            answer: ans,
+            chapter: chap,
+            subject: userData.subject,
+            type: 'topic-wise',
+            createdAt: serverTimestamp()
         });
-        alert("Question Added!");
+        alert("Question Published Directly!");
     };
+};
+
 }
 
 function renderTeacherUI(container, userData) {
