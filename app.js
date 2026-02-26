@@ -14,31 +14,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-function renderSubjects() {
-    const grid = document.getElementById('mainGrid');
-    if (!grid) return;
 
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+let userData = null;
+const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
 
-    Object.keys(SYLLABUS).forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
-        
-        div.innerHTML = `
-            <div>
-                <div class="text-[8px] font-bold text-yellow-500 mb-1 tracking-tighter uppercase">NEET Master 2026</div>
-                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
-            </div>
-            <i class="fas fa-chevron-right text-slate-700"></i>
-        `;
-        
-        div.onclick = () => { 
-            navHistory.push(() => renderSubjects()); 
-            renderChapters(sub); 
-        };
-        grid.appendChild(div);
-    });
-                }
 const SYLLABUS = {
     "Biology": {
         "01. The Living World": ["1.1 What is Living?", "1.2 Diversity in Living World", "1.3 Taxonomic Categories"],
@@ -109,31 +88,26 @@ const SYLLABUS = {
         "06. Amines": ["6.1 Basicity of Amines"]
     }
 };
-                                              
-
-let userData = null;
-const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
 
 onAuthStateChanged(auth, (user) => {
-   onAuthStateChanged(auth, (user) => {
     if (user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             if (snap.exists()) {
                 userData = snap.data();
-                initApp(userData.role); 
-            } else {
-                console.log("No Firestore data for this UID. Creating entry...");
-    
+                
                 if (userData.blocked) {
                     alert("Your account is BLOCKED.");
                     signOut(auth);
                     return;
                 }
+
                 document.getElementById('authPage').classList.add('hidden');
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
                 
                 showPanel(userData.role);
+            } else {
+                console.log("No Firestore data found for this user.");
             }
         });
     } else {
@@ -142,6 +116,20 @@ onAuthStateChanged(auth, (user) => {
         document.getElementById('appContent').classList.add('hidden');
     }
 });
+
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+
+    Object.keys(SYLLABUS).forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
+        div.innerHTML = `<div><div class="text-[8px] font-bold text-yellow-500 mb-1 uppercase">NEET Master 2026</div><div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
+        div.onclick = () => renderChapters(sub);
+        grid.appendChild(div);
+    });
+}
 
 function showPanel(role) {
     document.getElementById('studentPanel').classList.toggle('hidden', role !== 'student');
@@ -165,19 +153,12 @@ function loadAdminUsers() {
         snap.forEach(uDoc => {
             const u = uDoc.data();
             if (u.role === 'admin') return;
-
             const card = document.createElement('div');
             card.className = "p-4 bg-slate-900 rounded-2xl border border-slate-800 flex justify-between items-center mb-3";
-            card.innerHTML = `
-                <div>
-                    <div class="font-bold text-sm">${u.name} <span class="text-[9px] bg-slate-800 px-2 rounded-full">${u.role}</span></div>
-                    <div class="text-[10px] text-slate-500">${u.email}</div>
-                    <div class="text-[9px] text-yellow-500 mt-1">${u.paid ? '● PREMIUM' : '○ FREE'} | ${u.blocked ? 'BLOCKED' : 'ACTIVE'}</div>
-                </div>
+            card.innerHTML = `<div><div class="font-bold text-sm">${u.name}</div><div class="text-[9px] text-yellow-500">${u.paid ? 'PAID' : 'FREE'}</div></div>
                 <div class="flex gap-2">
-                    <button onclick="updateUserStatus('${uDoc.id}', 'paid', ${!u.paid})" class="p-2 rounded-lg bg-green-500/10 text-green-500 text-[10px] font-bold"><i class="fas fa-check-circle"></i></button>
-                    <button onclick="updateUserStatus('${uDoc.id}', 'blocked', ${!u.blocked})" class="p-2 rounded-lg bg-red-500/10 text-red-500 text-[10px] font-bold"><i class="fas fa-ban"></i></button>
-                    <button onclick="removeUser('${uDoc.id}')" class="p-2 rounded-lg bg-slate-800 text-slate-400 text-[10px]"><i class="fas fa-trash"></i></button>
+                    <button onclick="updateUserStatus('${uDoc.id}', 'paid', ${!u.paid})" class="p-2 bg-slate-800 rounded text-[10px]">STATUS</button>
+                    <button onclick="removeUser('${uDoc.id}')" class="p-2 bg-red-900/20 text-red-500 rounded text-[10px]"><i class="fas fa-trash"></i></button>
                 </div>`;
             container.appendChild(card);
         });
@@ -187,63 +168,15 @@ function loadAdminUsers() {
 window.updateUserStatus = async (uid, field, value) => {
     await updateDoc(doc(db, "users", uid), { [field]: value });
 };
+
 window.removeUser = async (uid) => {
-    if(confirm("Permanently delete this user?")) await deleteDoc(doc(db, "users", uid));
+    if(confirm("Delete user?")) await deleteDoc(doc(db, "users", uid));
 };
 
 function setupTeacherPanel() {
     const subSel = document.getElementById('upSubject');
-    const chSel = document.getElementById('upChapter');
-    const topSel = document.getElementById('upTopic');
-
-    subSel.innerHTML = `<option value="">Select Subject</option>` + 
-        Object.keys(SYLLABUS).map(s => `<option value="${s}">${s}</option>`).join('');
-    subSel.onchange = () => {
-        const sub = subSel.value;
-        if(sub && SYLLABUS[sub]) {
-            const chapters = Object.keys(SYLLABUS[sub]);
-            document.getElementById('upChapter').outerHTML = `<select id="upChapter" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"></select>`;
-            const newChSel = document.getElementById('upChapter');
-            newChSel.innerHTML = `<option value="">Select Chapter</option>` + 
-                chapters.map(c => `<option value="${c}">${c}</option>`).join('');
-            
-            newChSel.onchange = () => {
-                const ch = newChSel.value;
-                if(ch && SYLLABUS[sub][ch]) {
-                    document.getElementById('upTopic').outerHTML = `<select id="upTopic" class="w-full p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs"></select>`;
-                    const newTopSel = document.getElementById('upTopic');
-                    newTopSel.innerHTML = SYLLABUS[sub][ch].map(t => `<option value="${t}">${t}</option>`).join('');
-                }
-            };
-        }
-    };
+    subSel.innerHTML = `<option value="">Select Subject</option>` + Object.keys(SYLLABUS).map(s => `<option value="${s}">${s}</option>`).join('');
 }
-
-document.getElementById('uploadBtn').onclick = async () => {
-    const type = document.getElementById('upType').value;
-    const subject = document.getElementById('upSubject').value;
-    const chapter = document.getElementById('upChapter').value;
-    const topic = document.getElementById('upTopic').value;
-    const link = document.getElementById('upLink').value;
-
-    if(!subject || !chapter || !topic || !link) {
-        alert("Please fill all fields!");
-        return;
-    }
-
-    try {
-        await addDoc(collection(db, "materials"), {
-            type, subject, chapter, topic, link,
-            teacherId: auth.currentUser.uid,
-            teacherName: userData.name,
-            createdAt: Date.now()
-        });
-        alert("Success! Content published to Student Dashboard.");
-        document.getElementById('upLink').value = "";
-    } catch(e) {
-        alert("Upload failed: " + e.message);
-    }
-};
 
 document.getElementById('authBtn').onclick = async () => {
     const email = document.getElementById('email').value.trim();
@@ -255,12 +188,9 @@ document.getElementById('authBtn').onclick = async () => {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await setDoc(doc(db, "users", res.user.uid), {
                 name: document.getElementById('regName').value,
-                city: document.getElementById('regCity').value,
                 email: email,
                 role: document.getElementById('regRole').value,
-                paid: false,
-                blocked: false,
-                bpcoins: 0
+                paid: false, blocked: false, bpcoins: 0
             });
         } else {
             await signInWithEmailAndPassword(auth, email, pass);
@@ -271,26 +201,5 @@ document.getElementById('authBtn').onclick = async () => {
 };
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.reload());
-document.getElementById('toggleAuth').onclick = () => {
-    document.getElementById('signupFields').classList.toggle('hidden');
-    const isSignup = !document.getElementById('signupFields').classList.contains('hidden');
-    document.getElementById('authBtn').innerText = isSignup ? 'CREATE ACCOUNT' : 'CONTINUE';
-};
+document.getElementById('toggleAuth').onclick = () => document.getElementById('signupFields').classList.toggle('hidden');
         
-window.updateStatus = async (uid, field, value) => {
-    try {
-        const userRef = doc(db, "users", uid);
-        
-        await updateDoc(userRef, { 
-            [field]: value 
-        });
-        
-        const msg = field === 'paid' ? (value ? "User Unlocked (Paid)" : "User Locked (Free)") : (value ? "User Blocked" : "User Unblocked");
-        alert(msg);
-        
-    } catch (e) {
-        console.error("Update failed:", e);
-        alert("Failed to update status. Check internet or permissions.");
-    }
-};
-    
