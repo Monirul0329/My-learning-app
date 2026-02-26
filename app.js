@@ -117,8 +117,27 @@ function renderSubjects() {
         div.innerHTML = `<div><div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
         div.onclick = () => {
             navHistory.push(() => renderSubjects());
-            if (sub === "Chemistry") renderChemistryParts();
-            else renderChapters(sub);
+            if (sub === "Chemistry") {
+                renderChemistryParts();
+            } else {
+                renderChapters(sub);
+            }
+        };
+        grid.appendChild(div);
+    });
+}
+function renderChemistryParts() {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
+    
+    ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"].forEach(part => {
+        const div = document.createElement('div');
+        div.className = "p-5 bg-slate-800 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
+        div.innerHTML = `<span class="font-bold text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-500"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderChemistryParts());
+            renderChapters("Chemistry", part); 
         };
         grid.appendChild(div);
     });
