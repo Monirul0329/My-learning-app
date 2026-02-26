@@ -14,6 +14,7 @@
         .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1.5rem; border: 2px solid #1e293b; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
+        .course-card { background: linear-gradient(145deg, #0f172a, #1e293b); border: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="text-slate-200">
@@ -24,22 +25,22 @@
         </button>
         <div class="text-center">
             <div class="font-black text-xl italic text-yellow-500 tracking-tighter">mNeet 2026</div>
-            <div id="userLevelDisplay" class="text-[9px] font-bold uppercase text-slate-400 tracking-widest">Level: Loading...</div>
+            <div id="userLevelDisplay" class="text-[9px] font-bold uppercase text-slate-400">Level: Loading...</div>
         </div>
         <div class="flex items-center gap-3">
             <div class="bg-yellow-500 text-black px-3 py-1 rounded-lg font-black text-[10px] shadow-lg">
                 <span id="coins">0</span> BP
             </div>
-            <button id="logoutBtn" class="text-slate-500 hover:text-red-500 p-1"><i class="fas fa-power-off"></i></button>
+            <button id="logoutBtn" class="text-slate-500 hover:text-red-500"><i class="fas fa-power-off"></i></button>
         </div>
     </header>
 
     <div id="authPage" class="min-h-screen flex items-center justify-center p-6">
         <div class="w-full max-w-md bg-[#0f172a] p-8 rounded-[2.5rem] border border-slate-800 shadow-2xl">
             <h1 class="text-4xl font-black text-yellow-500 mb-2 italic text-center">mNeet</h1>
-            <p class="text-slate-500 text-[10px] uppercase text-center tracking-widest mb-8 font-bold">Future Doctor's Portal</p>
             <div id="signupFields" class="hidden space-y-3 mb-4">
-                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-600">
+                <input type="text" id="regName" placeholder="Full Name" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
+                <input type="text" id="regCity" placeholder="Your City" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none">
                 <select id="regRole" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none text-xs text-slate-400">
                     <option value="student">Student Account</option>
                     <option value="teacher">Teacher Account</option>
@@ -48,7 +49,8 @@
             <div class="space-y-3">
                 <input type="email" id="email" placeholder="Email Address" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-600">
                 <input type="password" id="pass" placeholder="Password" class="w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 outline-none focus:border-yellow-600">
-                <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black transition-all">Continue</button>
+                <button id="authBtn" class="w-full bg-yellow-600 py-4 rounded-2xl font-black uppercase text-black">Continue</button>
+                <button id="forgotBtn" class="w-full text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2 hover:text-yellow-500">Forgot Password?</button>
             </div>
             <div class="flex justify-center mt-6"><button id="toggleAuth" class="text-[10px] font-bold text-yellow-500 uppercase underline">New Access</button></div>
             <p id="authMsg" class="mt-4 text-center text-red-500 text-[10px] font-bold"></p>
@@ -56,41 +58,28 @@
     </div>
 
     <main id="appContent" class="hidden pt-28 p-4 max-w-2xl mx-auto pb-32">
-        <section id="studentPanel" class="hidden">
-            <div class="flex gap-4 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar scroll-smooth">
-                <button id="tabStudy" class="nav-tab active pb-3 font-black text-[10px] uppercase whitespace-nowrap px-2">Let's Study</button>
-                <button id="tabNcert" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">NCERT Books</button>
-                <button id="tabPyq" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">PYQs</button>
-                <button id="tabRank" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Weekly Rank</button>
-            </div>
-            <div id="mainGrid" class="space-y-4"></div>
-        </section>
+        
+        <div class="flex gap-4 border-b border-slate-800 mb-6 overflow-x-auto no-scrollbar scroll-smooth">
+            <button id="tabHome" class="nav-tab active pb-3 font-black text-[10px] uppercase whitespace-nowrap px-2">Home/Store</button>
+            <button id="tabPrime" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Prime Lectures</button>
+            <button id="tabPractice" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Practice Zone</button>
+            <button id="tabNcert" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">NCERT & PYQ</button>
+            <button id="tabRank" class="nav-tab pb-3 text-slate-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Rank</button>
+            <button id="tabAdmin" class="hidden nav-tab pb-3 text-red-500 font-black text-[10px] uppercase whitespace-nowrap px-2">Admin</button>
+        </div>
 
-        <section id="teacherPanel" class="hidden space-y-6">
-            <div class="p-6 bg-blue-900/10 border border-blue-900/30 rounded-[2rem]">
-                <h2 class="text-blue-500 font-black italic mb-4 uppercase text-xs">Content Studio</h2>
-                <div class="space-y-3">
-                    <select id="upType" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300">
-                        <option value="video">Lecture Video (Drive/YT Link)</option>
-                        <option value="pdf">NCERT PDF (Drive Link)</option>
-                        <option value="pyq">PYQ Document (Drive Link)</option>
-                    </select>
-                    <select id="upSubject" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300"></select>
-                    <input type="text" id="upChapter" placeholder="Chapter Name" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-200">
-                    <input type="text" id="upLink" placeholder="Paste Shared Link" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-200">
-                    <button id="uploadBtn" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase">Publish Content</button>
-                </div>
-            </div>
-        </section>
+        <div id="viewContainer" class="space-y-6"></div>
     </main>
 
-    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/98 flex flex-col items-center justify-center p-4">
+    <div id="videoModal" class="hidden fixed inset-0 z-[100] bg-black/98 flex flex-col items-center p-4 overflow-y-auto">
         <button id="closeVideo" class="absolute top-6 right-6 text-white text-4xl">&times;</button>
-        <div id="playerBox" class="w-full max-w-4xl video-container mb-6"></div>
-        <div class="text-center">
-            <h3 id="playingTitle" class="text-yellow-500 font-black italic uppercase text-lg mb-2"></h3>
-            <div class="bg-yellow-500/10 border border-yellow-500/20 px-4 py-2 rounded-full inline-block">
-                <p class="text-yellow-500 text-[10px] font-black tracking-widest uppercase">Rewards Active: 4 BP / Minute</p>
+        <div id="playerBox" class="w-full max-w-4xl video-container mt-12 mb-4"></div>
+        <div class="w-full max-w-4xl bg-slate-900 rounded-3xl p-4 flex flex-col h-[300px]">
+            <div class="text-yellow-500 font-black text-[10px] uppercase mb-2 italic">Live Discussion</div>
+            <div id="chatBox" class="flex-1 overflow-y-auto space-y-2 mb-4 no-scrollbar p-2"></div>
+            <div class="flex gap-2">
+                <input type="text" id="chatInput" placeholder="Ask a doubt..." class="flex-1 bg-slate-950 border border-slate-800 p-3 rounded-xl text-xs outline-none focus:border-yellow-600">
+                <button id="sendChat" class="bg-yellow-600 text-black px-4 rounded-xl font-bold"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -98,4 +87,4 @@
     <script type="module" src="app.js"></script>
 </body>
                     </html>
-                    
+    
