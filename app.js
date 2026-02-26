@@ -126,36 +126,6 @@ function renderSubjects() {
         grid.appendChild(div);
     });
 }
-function renderChemistryParts() {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-yellow-500 font-bold mb-4 uppercase text-[10px]">Chemistry Categories</h2>`;
-    
-    ["Physical Chemistry", "Inorganic Chemistry", "Organic Chemistry"].forEach(part => {
-        const div = document.createElement('div');
-        div.className = "p-5 bg-slate-800 rounded-2xl mb-3 flex justify-between items-center cursor-pointer border border-slate-700";
-        div.innerHTML = `<span class="font-bold text-xs uppercase italic">${part}</span><i class="fas fa-flask text-slate-500"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderChemistryParts());
-            renderChapters("Chemistry", part); 
-        };
-        grid.appendChild(div);
-    });
-}
-
-function renderSubjects() {
-    const grid = document.getElementById('mainGrid');
-    if (!grid) return;
-    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
-
-    ["Biology", "Physics", "Chemistry"].forEach(sub => {
-        const div = document.createElement('div');
-        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3";
-        div.innerHTML = `<div><div class="font-black text-sm text-slate-200 uppercase">${sub}</div></div><i class="fas fa-chevron-right text-slate-700"></i>`;
-        
-        div.onclick = () => {
-            navHistory.push(() => renderSubjects());
-            if (sub === "Chemistry") {
                 
 function renderSubjects() {
     const grid = document.getElementById('mainGrid');
