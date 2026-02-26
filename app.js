@@ -180,29 +180,29 @@ function renderSubjects() {
 }
                 
 
-function renderChapters(sub, part = null) {
-    const grid = document.getElementById('mainGrid');
-    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part || sub}</h2>`;
-    const chapters = part ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
-    chapters.forEach((ch, i) => {
-        const isLocked = !userData.paid && i !== 0;
-        const div = document.createElement('div');
-        div.className = `p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 ${isLocked ? 'opacity-40' : 'cursor-pointer'}`;
-        div.innerHTML = `<span class="text-xs font-bold text-slate-300">${ch}</span><i class="fas ${isLocked ? 'fa-lock' : 'fa-play-circle'} text-yellow-600"></i>`;
-        div.onclick = () => {
-            if (!isLocked) {
-                navHistory.push(() => renderChapters(sub, part));
-                renderTopics(sub, ch, part);
-            } else alert("Unlock Premium!");
-        };
-        grid.appendChild(div);
-    });
-}
 
 function renderTopics(sub, ch, part = null) {
     const grid = document.getElementById('mainGrid');
     grid.innerHTML = `<h2 class="text-xs font-bold mb-4 text-slate-500 italic">${ch}</h2>`;
-    const topics = part ? SYLLABUS.Chemistry[part][ch] : SYLLABUS[sub][ch];
+    const topics = part ? SYLLABUS.Chemistry[part][ch] function renderChapters(sub, part = null) {
+    const grid = document.getElementById('mainGrid');
+    grid.innerHTML = `<h2 class="text-slate-400 font-bold mb-4 uppercase text-[10px]">${part ? part : sub}</h2>`;
+    
+    const chapters = (sub === "Chemistry" && part) ? Object.keys(SYLLABUS.Chemistry[part]) : Object.keys(SYLLABUS[sub]);
+    
+    chapters.forEach((ch) => {
+        const div = document.createElement('div');
+        div.className = "p-4 bg-slate-900 rounded-xl mb-2 flex justify-between items-center border border-slate-800 cursor-pointer";
+        div.innerHTML = `<span class="text-xs font-bold text-slate-300">${ch}</span><i class="fas fa-play-circle text-yellow-600"></i>`;
+        
+        div.onclick = () => {
+            navHistory.push(() => renderChapters(sub, part));
+            renderTopics(sub, ch, part);
+        };
+        grid.appendChild(div);
+    });
+                     }
+    : SYLLABUS[sub][ch];
     topics.forEach(t => {
         const div = document.createElement('div');
         div.className = "p-4 bg-slate-950 rounded-xl mb-2 border border-slate-900 flex justify-between items-center";
