@@ -14,6 +14,31 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+function renderSubjects() {
+    const grid = document.getElementById('mainGrid');
+    if (!grid) return;
+
+    grid.innerHTML = `<h2 class="text-[10px] text-slate-500 font-bold uppercase mb-4 tracking-widest">Select Subject</h2>`;
+
+    Object.keys(SYLLABUS).forEach(sub => {
+        const div = document.createElement('div');
+        div.className = "p-6 bg-slate-900 rounded-[2rem] border border-slate-800 flex justify-between items-center cursor-pointer mb-3 active:scale-95 transition-all shadow-xl";
+        
+        div.innerHTML = `
+            <div>
+                <div class="text-[8px] font-bold text-yellow-500 mb-1 tracking-tighter uppercase">NEET Master 2026</div>
+                <div class="font-black italic text-sm text-slate-200 uppercase">${sub}</div>
+            </div>
+            <i class="fas fa-chevron-right text-slate-700"></i>
+        `;
+        
+        div.onclick = () => { 
+            navHistory.push(() => renderSubjects()); 
+            renderChapters(sub); 
+        };
+        grid.appendChild(div);
+    });
+                }
 const SYLLABUS = {
     "Biology": {
         "01. The Living World": ["1.1 What is Living?", "1.2 Diversity in Living World", "1.3 Taxonomic Categories"],
@@ -90,10 +115,15 @@ let userData = null;
 const LEVELS = ["Medical Novice", "Cortex Activator", "Syllabus Architect", "Master Clinician", "Test-Tube Titan", "The Diagnostician", "Vitality Voyager", "Neural Conqueror", "The White-Coat Elite", "LEGENDARY SURGEON"];
 
 onAuthStateChanged(auth, (user) => {
+   onAuthStateChanged(auth, (user) => {
     if (user) {
         onSnapshot(doc(db, "users", user.uid), (snap) => {
             if (snap.exists()) {
                 userData = snap.data();
+                initApp(userData.role); 
+            } else {
+                console.log("No Firestore data for this UID. Creating entry...");
+    
                 if (userData.blocked) {
                     alert("Your account is BLOCKED.");
                     signOut(auth);
@@ -247,3 +277,20 @@ document.getElementById('toggleAuth').onclick = () => {
     document.getElementById('authBtn').innerText = isSignup ? 'CREATE ACCOUNT' : 'CONTINUE';
 };
         
+window.updateStatus = async (uid, field, value) => {
+    try {
+        const userRef = doc(db, "users", uid);
+        
+        await updateDoc(userRef, { 
+            [field]: value 
+        });
+        
+        const msg = field === 'paid' ? (value ? "User Unlocked (Paid)" : "User Locked (Free)") : (value ? "User Blocked" : "User Unblocked");
+        alert(msg);
+        
+    } catch (e) {
+        console.error("Update failed:", e);
+        alert("Failed to update status. Check internet or permissions.");
+    }
+};
+    
