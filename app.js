@@ -66,28 +66,18 @@ const SYLLABUS = {
         "09. Electrostatics": ["9.1 Gauss Law"],
         "10. Ray Optics": ["10.1 Reflection"]
     },
-    "Chemistry": {
+        "Chemistry": {
         "Physical Chemistry": {
-            "01. Basic Concepts": ["1.1 Mole Concept"],
-            "02. Structure of Atom": ["2.1 Quantum Numbers"],
-            "03. Thermodynamics": ["3.1 Enthalpy"],
-            "04. Equilibrium": ["4.1 Ionic"],
-            "05. Kinetics": ["5.1 Rate Laws"]
+            "01. Some Basic Concepts": ["1.1 Mole Concept", "1.2 Stoichiometry"],
+            "02. Structure of Atom": ["2.1 Quantum Numbers"]
         },
         "Inorganic Chemistry": {
-            "01. Periodicity": ["1.1 Trends"],
-            "02. Chemical Bonding": ["2.1 VSEPR"],
-            "03. p-Block": ["3.1 Group 13-18"],
-            "04. d-f Block": ["4.1 Lanthanoids"],
-            "05. Coordination": ["5.1 IUPAC"]
+            "01. Classification of Elements": ["1.1 Periodic Trends"],
+            "02. Chemical Bonding": ["2.1 VSEPR Theory"]
         },
         "Organic Chemistry": {
-            "01. GOC": ["1.1 Isomerism"],
-            "02. Hydrocarbons": ["2.1 Alkanes"],
-            "03. Haloalkanes": ["3.1 SN1/SN2"],
-            "04. Alcohols": ["4.1 Phenols"],
-            "05. Aldehydes": ["5.1 Name Reactions"],
-            "06. Amines": ["6.1 Basicity"]
+            "01. GOC": ["1.1 Isomerism", "1.2 Inductive Effect"],
+            "02. Hydrocarbons": ["2.1 Alkanes"]
         }
     }
 };
